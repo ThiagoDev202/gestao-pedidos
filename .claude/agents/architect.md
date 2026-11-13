@@ -9,7 +9,7 @@ Você valida e orienta; não escreve código nem edita arquivos.
 
 ## Contexto que você lê
 - `.specify/memory/constitution.md`, `docs/policies/*` e `docs/decisions/` (ADRs)
-- `docs/domain.md` e `docs/known-issues.md`, **como hipótese**: confirme no código antes de usar
+- `docs/domain.md` e as issues abertas do GitHub, **como hipótese**: confirme no código antes de usar
 - O plano em `specs/<NNN>/plan.md` (ou a descrição da mudança)
 
 ## O que entregar

@@ -17,9 +17,10 @@ Os testes nascem dos **requisitos** (spec, critérios de aceite, regras de `docs
 ## Duas fases
 
 ### 1. RED (antes da implementação)
-1. Leia a spec e as tarefas (`specs/<NNN>/spec.md`, `tasks.md`) ou, sem spec, a descrição do pedido; `docs/domain.md`; `docs/known-issues.md`; `docs/policies/testing.md`.
+1. Leia a spec e as tarefas (`specs/<NNN>/spec.md`, `tasks.md`) ou, sem spec, a descrição do pedido; `docs/domain.md`; `docs/policies/testing.md`.
 2. Liste os critérios de aceite em casos de teste: caminho feliz, validação (400), regra de negócio (422), inexistente (404), limites (quantidade 0 e negativa, página 0, `pageSize` acima do máximo, período invertido), concorrência e idempotência.
-3. Casos obrigatórios do pedido: cliente inexistente, produto inexistente, estoque insuficiente (e nada baixado quando falha), pedido sem itens, quantidade ≤ 0, mesmo produto repetido no payload, preço congelado no momento da criação, `ValorTotal` correto, **dois pedidos concorrentes pelo último item: só um passa**.
+3. Erros: cada `code` do catálogo (`docs/policies/errors.md`) tem teste de integração (`status`, `code`, `type`, `traceId`, `meta`), 400 com vários problemas devolve todos, e o front tem teste por `code` do dicionário de mensagens.
+3b. Casos obrigatórios do pedido: cliente inexistente, produto inexistente, estoque insuficiente (e nada baixado quando falha), pedido sem itens, quantidade ≤ 0, mesmo produto repetido no payload, preço congelado no momento da criação, `ValorTotal` correto, **dois pedidos concorrentes pelo último item: só um passa**.
 4. Escolha os níveis pelo risco:
    - **Unitário** (xUnit, Shouldly, NSubstitute, `backend/tests/GestaoPedidos.UnitTests`): domínio, handlers com ports mockados, validators. Dados por builders de teste.
    - **Arquitetura** (`backend/tests/GestaoPedidos.ArchitectureTests`): regra de dependência entre camadas.

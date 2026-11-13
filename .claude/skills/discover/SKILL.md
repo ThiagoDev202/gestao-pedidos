@@ -18,7 +18,7 @@ Chegar a um brief claro **antes** da spec, sem escrever código e sem inventar r
 - Regras de negócio novas ou alteradas e conflitos com as atuais.
 
 ## 3. Impacto
-Camadas (`backend`, `frontend`, `database`), mudança de contrato ou schema (confirme com `impact-analyzer`), riscos de `docs/known-issues.md`.
+Camadas (`backend`, `frontend`, `database`), mudança de contrato ou schema (confirme com `impact-analyzer`), riscos já registrados em issues do GitHub (`gh issue list`).
 
 ## 4. Fatiar
 Entregas pequenas e independentes, na ordem de valor; cada fatia vira uma spec.

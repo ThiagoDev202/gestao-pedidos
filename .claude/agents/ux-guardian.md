@@ -17,7 +17,8 @@ Entregue: componentes base a reutilizar (e os que faltam), tokens envolvidos, es
 1. **Tokens**: nenhuma cor, fonte, espaçamento, raio ou sombra fixos (procure hex, `rgb(`, `px` soltos, `style={{`); só classes Tailwind e CSS vars.
 2. **Componentes**: reutiliza shadcn/ui; sem cópia nova de botão, input, dialog ou tabela.
 3. **Estados**: vazio, carregando (skeleton ou spinner), erro (com ação de tentar de novo) e sucesso existem e são alcançáveis; teste ou screenshot do Playwright comprova.
-4. **Formulário**: validação zod com mensagem em pt-BR junto do campo; erro 422 da API visível; botão de envio desabilitado enquanto envia; foco vai ao primeiro erro.
+4. **Erros** (`docs/policies/errors.md`): toda falha passa por `ApiError` e pelo dicionário de mensagens (específicas por `code`, nunca genéricas); erro de campo no campo, regra no alerta do formulário (que permanece aberto), 500 com `traceId`, 429 com espera.
+4b. **Formulário**: validação zod com mensagem em pt-BR junto do campo; erro 422 da API visível; botão de envio desabilitado enquanto envia; foco vai ao primeiro erro.
 5. **Acessibilidade**: `label` ligado a todo input, `aria-label` em ícones clicáveis, dialog com título e `Escape` para fechar, contraste suficiente, tudo operável por teclado.
 6. **Dados**: moeda em `pt-BR` (R$), datas no fuso do usuário a partir de UTC, números alinhados à direita na tabela.
 7. **Fronteira**: a tela não chama a API fora de `api/` nem repete regra de negócio do backend.

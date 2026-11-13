@@ -1,6 +1,6 @@
 ---
 name: retro
-description: Fecha qualquer solicitação ou tarefa do Gestão de Pedidos — avalia o que deve ir para a memória (MEMORY.md), atualiza os registros existentes e alinha a documentação ao código alterado (docs, known-issues, ADRs, domain). Use SEMPRE ao final de uma tarefa, de cada PR, ou quando o usuário pedir para atualizar memória ou documentação.
+description: Fecha qualquer solicitação ou tarefa do Gestão de Pedidos — avalia o que deve ir para a memória (MEMORY.md), atualiza os registros existentes e alinha a documentação ao código alterado (docs, ADRs, domain). Use SEMPRE ao final de uma tarefa, de cada PR, ou quando o usuário pedir para atualizar memória ou documentação.
 ---
 
 # Retro: devolver o aprendizado para a documentação
@@ -22,8 +22,8 @@ O objetivo é que a próxima pessoa (ou agente) encontre os docs **iguais ao có
 Para cada afirmação escrita, confirme no código e cite o caminho. Doc antigo errado em algo que você não alterou: corrija também.
 
 ## 3. Riscos e decisões
-- Problema encontrado e **não** resolvido: `docs/known-issues.md` (gravidade, `arquivo:linha`, impacto, sugestão).
-- Problema resolvido: marque como corrigido (✅, riscado, com a branch).
+- Problema encontrado e **não** resolvido: abra uma issue do GitHub (`gh issue create`) com gravidade, `arquivo:linha`, impacto e sugestão.
+- Problema resolvido: cite a issue no PR (`Closes #N`).
 - Decisão de arquitetura: `docs/decisions/ADR-NNN-<slug>.md` (contexto, decisão, alternativas, consequências) e índice em `docs/decisions/README.md`.
 - **Registro para o README** ("Como usei o Claude"): anote em `docs/playbooks/claude-log.md` o que funcionou bem e o que o Claude errou e você corrigiu nesta entrega (achados do `code-reviewer` e do `qa-guardian`).
 
@@ -37,4 +37,4 @@ A memória do Claude Code deste projeto (`MEMORY.md` + um arquivo por fato) é o
 6. Toda afirmação salva sobre o sistema precisa ter sido conferida no código nesta sessão.
 
 ## 5. Relatório
-Liste memórias criadas/atualizadas/removidas (ou "nenhuma, porque…"), docs alterados, linhas de `known-issues.md` e ADRs criados. Não faça commit sem pedido.
+Liste memórias criadas/atualizadas/removidas (ou "nenhuma, porque…"), docs alterados, issues abertas e ADRs criados. Não faça commit sem pedido.

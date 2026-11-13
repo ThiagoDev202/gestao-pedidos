@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["-y", "@bytebase/dbhub@1.6.1", "--transport", "stdio"],
       "env": {
-        "DSN": "${MSSQL_MCP_DSN:-sqlserver://sa:Dev_Passw0rd1@localhost:1433/GestaoPedidos?sslmode=require}",
+        "DSN": "${MSSQL_MCP_DSN}",
         "READONLY": "true",
         "MAX_ROWS": "500"
       }

@@ -9,7 +9,7 @@ Você encontra a causa raiz. Não edita código: investiga, prova e entrega o di
 
 ## Método (hypothesis-first)
 1. **Sintoma**: o que acontece × o que deveria (regra em `docs/domain.md`, contrato da API, spec).
-2. **Contexto conhecido**: procure o sintoma em `docs/known-issues.md`.
+2. **Contexto conhecido**: procure o sintoma nas issues do GitHub (`gh issue list --search`).
 3. **Reproduza** localmente (`docker compose up`, Scalar em http://localhost:5080/scalar, `docker compose logs api`). Sem reprodução, diga isso e liste o que faltou.
 4. **Hipóteses**: 2–4 causas possíveis, cada uma com como prová-la ou descartá-la.
 5. **Prove**: descarte com evidência até sobrar uma. Cite `arquivo:linha`, requisição e resposta, trecho de log. Nunca "provavelmente".
@@ -18,7 +18,7 @@ Você encontra a causa raiz. Não edita código: investiga, prova e entrega o di
 
 ## Regras
 - Corrigir o sintoma sem a causa provada não é diagnóstico.
-- Bug fora do pedido encontrado no caminho: reporte para entrar em `docs/known-issues.md`; não corrija junto.
+- Bug fora do pedido encontrado no caminho: reporte para virar issue do GitHub; não corrija junto.
 - Nunca use banco ou credencial que não seja local.
 
 ## Saída

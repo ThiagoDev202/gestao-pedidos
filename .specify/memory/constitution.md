@@ -1,15 +1,16 @@
 <!--
 Sync Impact Report
-Versão: (modelo) → 1.0.0 (ratificação inicial)
+Versão: 1.0.0 → 1.0.1 (PATCH: problemas fora do escopo passam a virar issues do GitHub, em vez de docs/known-issues.md, removido)
+Templates sincronizados no 1.0.1: spec, plan e tasks em pt-BR com os gates do projeto
+Versão anterior: (modelo) → 1.0.0 (ratificação inicial)
 Princípios adicionados: I–VII; seções Idioma, Restrições técnicas, Fluxo e gates de qualidade, Governança
-Templates a sincronizar quando a primeira spec for criada: plan-template.md (Constitution Check), tasks-template.md (gates finais)
 Pendências: nenhuma
 -->
 # Constituição do Gestão de Pedidos
 
 Aplicação de cadastro e consulta de pedidos de clientes. Duas camadas no mesmo repositório: `backend/` (.NET, Clean Architecture, SQL Server) e `frontend/` (React + TypeScript). Banco versionado em `database/` e orquestração em `docker-compose.yml`.
 
-Contexto obrigatório antes de `/speckit-specify` e `/speckit-plan`: `docs/domain.md`, `docs/known-issues.md` e o doc da área afetada (índice em `CLAUDE.md`).
+Contexto obrigatório antes de `/speckit-specify` e `/speckit-plan`: `docs/domain.md` e o doc da área afetada (índice em `CLAUDE.md`).
 
 ## Idioma do projeto (NÃO NEGOCIÁVEL)
 
@@ -47,7 +48,7 @@ Documentação é hipótese até ser confirmada no código. Toda spec e todo pla
 O schema nasce de `database/*.sql`, idempotentes e executados automaticamente no `docker compose up`. O EF Core MUST NOT criar nem migrar o schema. Índice novo MUST ter justificativa com plano de execução (`STATISTICS IO`, plano real) registrada em `docs/playbooks/query-debug.md` ou no plano.
 
 ### VII. Simplicidade e mudança cirúrgica
-Fazer o menor conjunto de mudanças que cumpre a spec. Padrão de projeto (GoF) só quando resolve um problema real e está nomeado no plano; abstração, dependência ou configuração que a spec não pede MUST NOT entrar. Problemas fora do escopo encontrados no caminho MUST ser registrados em `docs/known-issues.md`, não corrigidos de carona.
+Fazer o menor conjunto de mudanças que cumpre a spec. Padrão de projeto (GoF) só quando resolve um problema real e está nomeado no plano; abstração, dependência ou configuração que a spec não pede MUST NOT entrar. Problemas fora do escopo encontrados no caminho MUST virar issue do GitHub, não ser corrigidos de carona.
 
 ## Restrições técnicas
 
@@ -73,4 +74,4 @@ O fluxo de entrega está na skill `/ship`. A `main` é protegida e só recebe PR
 
 Esta constituição prevalece sobre preferências individuais e atalhos. Emendas via `/speckit-constitution`, com versão semântica: MAJOR remove ou redefine princípio; MINOR acrescenta princípio ou amplia de forma relevante; PATCH esclarece. O guia operacional do dia a dia é o `AGENTS.md`; as políticas detalhadas ficam em `docs/policies/`.
 
-**Versão**: 1.0.0 | **Ratificada**: 2026-11-13 | **Última alteração**: 2026-11-13
+**Versão**: 1.0.1 | **Ratificada**: 2026-11-13 | **Última alteração**: 2026-11-13

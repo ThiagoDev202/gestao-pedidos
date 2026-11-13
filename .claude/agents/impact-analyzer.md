@@ -15,11 +15,11 @@ Backend e frontend não compartilham tipos: o contrato (`specs/<NNN>/contracts/o
 2. Para cada endpoint afetado, encontre os consumidores em `frontend/src/**/api` e as telas/hooks que os usam.
 3. Para cada campo de request/response que muda, encontre tipos e schemas zod do front.
 4. Schema: tabelas, FKs, constraints e índices afetados em `database/`; o mapeamento EF (`Infrastructure`) e as queries Dapper que dependem deles.
-5. Regras e riscos: `docs/domain.md` e `docs/known-issues.md`.
+5. Regras e riscos: `docs/domain.md` e issues abertas do GitHub.
 6. Testes existentes que cobrem a área e docs que precisarão de atualização.
 
 ## Saída
 - Tabela: item afetado · arquivo:linha · tipo (endpoint, DTO, tipo do front, tela, tabela, índice, script, doc, teste) · o que muda.
 - Camadas afetadas (`backend`, `frontend`, `database`) para o escopo do título do PR.
 - Classificação: mudança **aditiva** ou **quebra o contrato** (e qual ajuste coordenado front/back é exigido).
-- Riscos e itens de `known-issues.md` envolvidos; o que não foi possível verificar, marcado "não verificado".
+- Riscos e issues do GitHub envolvidas; o que não foi possível verificar, marcado "não verificado".

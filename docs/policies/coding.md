@@ -10,7 +10,7 @@ Vale para qualquer agente ou pessoa que escreva código aqui. Leia **antes** de 
 ## Durante
 - **Mudança mínima**: cada linha rastreia até um requisito da spec ou à causa do bug.
 - **Cirúrgica**: não reformate, não renomeie, não "melhore" código vizinho.
-- **Fora do escopo**: registre em `docs/known-issues.md`; não corrija de carona.
+- **Fora do escopo**: abra uma issue do GitHub (`gh issue create`); não corrija de carona.
 - Sem abstração, flag ou configuração que ninguém pediu. Dependência nova só com justificativa no plano.
 
 ## Clean Architecture e SOLID

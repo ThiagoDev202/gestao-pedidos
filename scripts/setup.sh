@@ -46,5 +46,6 @@ echo
 echo "Próximos passos:"
 echo "  docker compose up --build"
 echo "  web http://localhost:8080 | API http://localhost:5080/scalar"
+echo "  MCP do SQL Server: set -a; . ./.env; set +a antes de abrir o Claude Code (o DSN fica só no .env, fora do git)"
 echo "  leia README.md e AGENTS.md; entregas seguem o /ship"
 exit "$fail"

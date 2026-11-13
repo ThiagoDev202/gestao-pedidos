@@ -5,3 +5,12 @@ Alimentado pelo `/retro` a cada PR; vira a seção "Como usei o Claude" do READM
 ## Bootstrap (2026-11-13)
 - **Funcionou bem**: ler só a governança do repositório de referência (sem o código) e adaptar; agentes com papéis rígidos; guardrails executáveis em vez de regra só escrita.
 - **Corrigido**: o hook `PreToolUse` bloqueava comandos legítimos porque lia o texto inteiro do comando (corpo de heredoc com `--no-verify` e com a regex de coautoria); passou a ignorar corpos de heredoc (`scripts/hooks/strip-heredocs.awk`). Regex inline com parênteses em `check-pr.sh` deu erro de sintaxe e foi movida para variável.
+
+## PR 1: SDD (2026-11-13)
+- **Funcionou bem**: o `/speckit-analyze` e o `code-reviewer` acharam falhas reais antes de existir código: job `e2e` que quebraria o CI do PR 2 sem frontend, `dotnet test` com dois projetos, rate limit por IP que veria só o nginx, FR-017 e FR-021 sem teste. Perguntas do usuário no meio do plano (concorrência, erros, MCP com credencial) melhoraram o desenho.
+- **O Claude errou e foi corrigido**:
+  - Desenho de idempotência com a chave gravada só no fim: com estoque exato, a segunda requisição receberia 422 em vez do pedido da primeira. Correção: `sp_getapplock` pela chave no início da transação (apontado pelo `code-reviewer`).
+  - `.mcp.json` entrou com DSN e senha padrão; o guardrail só olhava `chave=valor`. Correção: `${MSSQL_MCP_DSN}` e regra contra credencial em URL (que, por sua vez, dava falso positivo em `${VAR}`, corrigido).
+  - Arquivos herdados do projeto de referência (`known-issues.md`, `backlog.md`) e tela de relatório fora da spec: removidos (Princípio VII).
+  - Scripts meus com falhas: regex inline em `[[ =~ ]]`, edição em lote que casou o trecho errado e duplicou o YAML (restaurado do git), numeração de tarefas com marcador que a regex não reconhecia.
+- **Lição**: toda regra "só olha X" de guardrail precisa de teste com um caso que deve falhar e outro que deve passar.

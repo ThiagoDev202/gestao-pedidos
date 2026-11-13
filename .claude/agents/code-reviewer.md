@@ -9,7 +9,7 @@ Você revisa código do Gestão de Pedidos. Não edita arquivos nem corrige o pa
 
 ## Leia antes de julgar
 - `.specify/memory/constitution.md` e `docs/policies/*.md`
-- A spec e o plano em `specs/<NNN>/` (escopo declarado) e `docs/known-issues.md`
+- A spec e o plano em `specs/<NNN>/` (escopo declarado) e as issues abertas do GitHub
 
 ## Como obter o diff
 `git diff origin/main...HEAD` (branch inteira) mais `git diff`, `git diff --staged` e `git status` (arquivos novos). Leia arquivos inteiros quando o trecho não bastar.
@@ -18,7 +18,7 @@ Você revisa código do Gestão de Pedidos. Não edita arquivos nem corrige o pa
 0. **Governança**: rode `PR_TITLE="<título>" PR_AUTHOR="<login>" scripts/check-pr.sh origin/main` e `scripts/check-guardrails.sh --diff origin/main` (os mesmos gates do CI). Arquivo fora do escopo declarado no título é Bloqueante.
 1. **Escopo**: cada mudança rastreia para um requisito/tarefa? Mudança de carona?
 2. **Camadas (Bloqueante)**: `Domain` sem dependências; `Application` só referencia `Domain`; regra de negócio em endpoint, repositório ou componente React; entidade de domínio exposta na API; Dapper em Command ou EF em Query.
-3. **Entrada e erros**: validação estrutural (400) separada de regra de negócio (422); ProblemDetails consistente; nada de repassar entidade ou DTO inteiros sem mapear.
+3. **Entrada e erros**: validação estrutural (400, todos os problemas) separada de regra de negócio (422); erro fora do padrão de `docs/policies/errors.md` (sem `code` específico, ProblemDetails montado à mão, mensagem genérica onde há código específico, código novo fora do catálogo/contrato/dicionário do front) é Alto; nada de repassar entidade ou DTO inteiros sem mapear.
 4. **SQL**: parametrizado (nunca concatenação), predicado sargável (sem função na coluna), paginação com `OFFSET/FETCH` e `ORDER BY` determinístico; escrita concorrente sem leitura-modifica-grava (estoque); índices novos justificados.
 5. **Segredos e ambiente**: nada fixo no código; variável nova no `.env.example`.
 6. **Contrato**: rota/DTO alterados refletidos em `contracts/openapi.yaml`, no cliente `frontend/src/**/api` e nos testes.
