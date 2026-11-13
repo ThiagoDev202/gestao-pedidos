@@ -33,7 +33,7 @@ content_of() {
   fi
 }
 
-url_cred_re='[a-z][a-z0-9+.-]*://[^/:@[:space:]"'"'"']+:[^@/$[:space:]"'"'"'][^@/[:space:]"'"'"']*@'
+url_cred_re='[a-z][a-z0-9+.-]*://[^/:@[:space:]"'"'"']+:([^@/$[:space:]"'"'"']|[$][^{A-Z_@/[:space:]"'"'"'])[^@/[:space:]"'"'"']*@'
 strong_re='AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|xox[baprs]-[A-Za-z0-9-]{10,}'
 key_re='(secret|password|passwd|token|api[_-]?key|access[_-]?key)[A-Za-z0-9_]*["'"'"']?[[:space:]]*[:=][[:space:]]*'
 quoted_re="${key_re}[\"'][^\"'\$ {]{12,}[\"']"

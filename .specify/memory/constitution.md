@@ -4,7 +4,6 @@ Versão: 1.0.0 → 1.0.1 (PATCH: problemas fora do escopo passam a virar issues 
 Templates sincronizados no 1.0.1: spec, plan e tasks em pt-BR com os gates do projeto
 Versão anterior: (modelo) → 1.0.0 (ratificação inicial)
 Princípios adicionados: I–VII; seções Idioma, Restrições técnicas, Fluxo e gates de qualidade, Governança
-Templates a sincronizar quando a primeira spec for criada: plan-template.md (Constitution Check), tasks-template.md (gates finais)
 Pendências: nenhuma
 -->
 # Constituição do Gestão de Pedidos

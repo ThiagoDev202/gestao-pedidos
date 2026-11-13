@@ -24,7 +24,7 @@ Sem `NEEDS CLARIFICATION` pendente: as duas decisões de escopo (produto repetid
 - **Preço**: lido na mesma transação; edição de preço está fora de escopo, então não há corrida relevante.
 
 ## 4b. Idempotência do POST /pedidos
-- **Decisão**: header opcional `Idempotency-Key` (UUID). Tabela `IdempotenciaPedidos(Chave PK, HashCorpo, PedidoId, CriadoEm)` gravada na mesma transação do pedido, com `sp_getapplock` pela chave no início da transação para serializar reenvios simultâneos antes de tocar o estoque; reenvio com o mesmo hash devolve o pedido original (200 com o mesmo corpo); hash diferente → 422 `chave_reutilizada`; a PK da chave é a última defesa.
+- **Decisão**: header opcional `Idempotency-Key` (UUID). Tabela `IdempotenciaPedidos(Chave PK, HashCorpo, PedidoId, CriadoEm)` gravada na mesma transação do pedido, com `sp_getapplock` pela chave no início da transação para serializar reenvios simultâneos antes de tocar o estoque; reenvio com o mesmo hash devolve o pedido original (200 + `Location` com o mesmo corpo); hash diferente → 422 `chave_reutilizada`; a PK da chave é a última defesa.
 - **Razão**: dois pedidos idênticos são legítimos, então a deduplicação não pode ser pelo conteúdo; o risco real é o mesmo envio repetido (duplo clique, retry após timeout, queda logo após o commit, onde o retry do EF não sabe se gravou). A chave torna o reenvio seguro.
 - **Alternativas**: só desabilitar o botão e limitar a taxa (não cobre retry de rede); deduplicar por conteúdo + janela de tempo (bloqueia compras repetidas legítimas); expirar chaves por job (fora de escopo; fica como próximo passo no README).
 - **Isolamento**: `READ COMMITTED` basta; a consistência vem do update atômico do estoque, da PK da chave e do `UNIQUE` dos itens.

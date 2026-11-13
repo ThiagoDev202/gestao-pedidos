@@ -98,9 +98,9 @@ docker-compose.yml
 
 ## Fluxos críticos
 
-**Criar pedido** (`CriarPedidoHandler`, dentro de `strategy.ExecuteAsync` + transação):
+**Criar pedido**. A validação estrutural (400) roda antes, no `ValidationDecorator`, fora da transação. O `CriarPedidoHandler` executa dentro de `strategy.ExecuteAsync` + transação:
 0. Abrir a transação e, havendo `Idempotency-Key`, tomar `sp_getapplock` (`Exclusive`, `LockOwner = Transaction`) com a chave: requisições simultâneas com a mesma chave são serializadas **antes** de tocar o estoque (sem isso a segunda ficaria presa no `UPDATE` e devolveria 422 em vez do pedido da primeira).
-1. Validator (400): ≥ 1 e ≤ 50 itens, quantidades > 0, sem produto repetido.
+1. (Validator, já executado pelo decorator) ≥ 1 e ≤ 50 itens, quantidades > 0, sem produto repetido.
 1b. Com o lock da chave: chave já registrada com o mesmo hash do corpo → devolve o pedido original (200); hash diferente → `ChaveReutilizada` (422).
 2. Cliente existe? senão `ClienteInexistente` → 422.
 3. Carrega produtos por id; faltando algum → `ProdutoInexistente` → 422.
