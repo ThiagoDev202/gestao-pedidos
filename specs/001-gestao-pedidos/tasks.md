@@ -37,36 +37,36 @@ description: "Lista de tarefas da feature Mini Gestão de Pedidos"
 
 ## Fase 1: Preparação
 
-- [ ] T011 [P] Criar `database/01-create-database.sql` (cria o banco `GestaoPedidos` se não existir, idempotente)
-- [ ] T012 [P] Criar `backend/GestaoPedidos.slnx`, `Directory.Build.props` (`Nullable` enable, `TreatWarningsAsErrors`, analyzers, `LangVersion` latest) e `Directory.Packages.props` (Central Package Management) em `backend/`
-- [ ] T013 Criar os 4 projetos em `backend/src/` (`GestaoPedidos.Domain`, `.Application`, `.Infrastructure`, `.Api`) com as referências da Clean Architecture (Domain sem referências; Application → Domain; Infrastructure → Application; Api → Application e Infrastructure)
-- [ ] T014 Criar os 3 projetos de teste em `backend/tests/` (`GestaoPedidos.UnitTests`, `.ArchitectureTests`, `.IntegrationTests`) com xUnit, Shouldly, NSubstitute, NetArchTest.Rules, Testcontainers.MsSql, Respawn, Microsoft.AspNetCore.Mvc.Testing
-- [ ] T015 [P] Ajustar overrides de analisadores C# em `backend/.editorconfig` (o estilo base é o `.editorconfig` da raiz) e confirmar `dotnet format backend --verify-no-changes`
-- [ ] T016 [P] Criar `backend/Dockerfile` (multi-stage sdk:10.0 → aspnet:10.0, usuário não root) e `backend/.dockerignore`
-- [ ] T017 [P] Criar `database/init/run-scripts.sh` (aguarda o SQL, executa `database/*.sql` em ordem com `sqlcmd -C`, sai com 0) e `docker-compose.yml` com `sqlserver` (2022, healthcheck) e `db-init` (`depends_on: service_healthy`)
+- [x] T011 [P] Criar `database/01-create-database.sql` (cria o banco `GestaoPedidos` se não existir, idempotente)
+- [x] T012 [P] Criar `backend/GestaoPedidos.slnx`, `Directory.Build.props` (`Nullable` enable, `TreatWarningsAsErrors`, analyzers, `LangVersion` latest) e `Directory.Packages.props` (Central Package Management) em `backend/`
+- [x] T013 Criar os 4 projetos em `backend/src/` (`GestaoPedidos.Domain`, `.Application`, `.Infrastructure`, `.Api`) com as referências da Clean Architecture (Domain sem referências; Application → Domain; Infrastructure → Application; Api → Application e Infrastructure)
+- [x] T014 Criar os 3 projetos de teste em `backend/tests/` (`GestaoPedidos.UnitTests`, `.ArchitectureTests`, `.IntegrationTests`) com xUnit, Shouldly, NSubstitute, NetArchTest.Rules, Testcontainers.MsSql, Respawn, Microsoft.AspNetCore.Mvc.Testing
+- [x] T015 [P] Ajustar overrides de analisadores C# em `backend/.editorconfig` (o estilo base é o `.editorconfig` da raiz) e confirmar `dotnet format backend --verify-no-changes`
+- [x] T016 [P] Criar `backend/Dockerfile` (multi-stage sdk:10.0 → aspnet:10.0, usuário não root) e `backend/.dockerignore`
+- [x] T017 [P] Criar `database/init/run-scripts.sh` (aguarda o SQL, executa `database/*.sql` em ordem com `sqlcmd -C`, sai com 0) e `docker-compose.yml` com `sqlserver` (2022, healthcheck) e `db-init` (`depends_on: service_healthy`)
 
 ## Fase 2: Fundação (bloqueia todas as histórias)
 
 ### Banco
-- [ ] T018 Criar `database/02-schema.sql` idempotente conforme `data-model.md` (`Clientes.Nome nvarchar(200)`, `Clientes.Email nvarchar(254)`, `Produtos.Nome nvarchar(200)`, `Produtos.Sku nvarchar(50)`, `DataPedido datetime2(3)`, `IdempotenciaPedidos.HashCorpo char(64)`): `Clientes`, `Produtos`, `Pedidos`, `ItensPedido`, `IdempotenciaPedidos` com PK, FK, `UNIQUE` (`Clientes.Email`, `Produtos.Sku`, `ItensPedido(PedidoId, ProdutoId)`), `CHECK` (`Preco >= 0`, `Estoque >= 0`, `Quantidade > 0`, `PrecoUnitario >= 0`, `ValorTotal >= 0`) e os 4 índices do plano (provisórios: o PR 4 os confirma ou remove com plano de execução, Princípio VI)
-- [ ] T019 Criar `database/03-seed.sql` set-based e determinístico (~200 clientes com homônimos, ~100 produtos com estoques variados e um com 1 unidade, ~50 mil pedidos em 2025–2026 com 1 a 5 itens e `ValorTotal` consistente), idempotente
-- [ ] T020 Verificar `docker compose up sqlserver db-init` aplicando os scripts duas vezes sem erro nem duplicação
+- [x] T018 Criar `database/02-schema.sql` idempotente conforme `data-model.md` (`Clientes.Nome nvarchar(200)`, `Clientes.Email nvarchar(254)`, `Produtos.Nome nvarchar(200)`, `Produtos.Sku nvarchar(50)`, `DataPedido datetime2(3)`, `IdempotenciaPedidos.HashCorpo char(64)`): `Clientes`, `Produtos`, `Pedidos`, `ItensPedido`, `IdempotenciaPedidos` com PK, FK, `UNIQUE` (`Clientes.Email`, `Produtos.Sku`, `ItensPedido(PedidoId, ProdutoId)`), `CHECK` (`Preco >= 0`, `Estoque >= 0`, `Quantidade > 0`, `PrecoUnitario >= 0`, `ValorTotal >= 0`) e os 4 índices do plano (provisórios: o PR 4 os confirma ou remove com plano de execução, Princípio VI)
+- [x] T019 Criar `database/03-seed.sql` set-based e determinístico (~200 clientes com homônimos, ~100 produtos com estoques variados e um com 1 unidade, ~50 mil pedidos em 2025–2026 com 1 a 5 itens e `ValorTotal` consistente), idempotente
+- [x] T020 Verificar `docker compose up sqlserver db-init` aplicando os scripts duas vezes sem erro nem duplicação
 
 ### Testes da fundação (qa-guardian, RED)
-- [ ] T021 [P] Teste de arquitetura em `backend/tests/GestaoPedidos.ArchitectureTests/DependencyRulesTests.cs`: Domain sem dependências; Application só em Domain; Api sem EF Core/Dapper fora do composition root; Domain e Application sem `Microsoft.AspNetCore`
-- [ ] T022 [P] Testes do catálogo de erros em `backend/tests/GestaoPedidos.UnitTests/Errors/ErrorCatalogTests.cs`: toda exceção de domínio e todo `code` de `docs/policies/errors.md` mapeia para `status`, `title`, `code`, `detail` e `meta`; nenhum `detail` expõe mensagem interna
-- [ ] T023 [P] Integração `backend/tests/GestaoPedidos.IntegrationTests/Banco/RestricoesDoBancoTests.cs`: o banco recusa `Estoque` negativo, `Preco` negativo, `Quantidade` ≤ 0, `Email` e `Sku` duplicados, produto repetido no mesmo pedido e FK inexistente (FR-021)
-- [ ] T024 Infra de teste de integração em `backend/tests/GestaoPedidos.IntegrationTests/Support/` (`SqlServerFixture` com Testcontainers aplicando `database/*.sql`, `ApiFactory`, Respawn, builders de dados, `FakeClock`)
-- [ ] T025 `qa-guardian` lacra (`scripts/qa-seal.sh seal`) e commit `test(api): add architecture and error catalog tests`
+- [x] T021 [P] Teste de arquitetura em `backend/tests/GestaoPedidos.ArchitectureTests/DependencyRulesTests.cs`: Domain sem dependências; Application só em Domain; Api sem EF Core/Dapper fora do composition root; Domain e Application sem `Microsoft.AspNetCore`
+- [x] T022 [P] Testes do catálogo de erros em `backend/tests/GestaoPedidos.UnitTests/Errors/ErrorCatalogTests.cs`: toda exceção de domínio e todo `code` de `docs/policies/errors.md` mapeia para `status`, `title`, `code`, `detail` e `meta`; nenhum `detail` expõe mensagem interna
+- [x] T023 [P] Integração `backend/tests/GestaoPedidos.IntegrationTests/Banco/RestricoesDoBancoTests.cs`: o banco recusa `Estoque` negativo, `Preco` negativo, `Quantidade` ≤ 0, `Email` e `Sku` duplicados, produto repetido no mesmo pedido e FK inexistente (FR-021)
+- [x] T024 Infra de teste de integração em `backend/tests/GestaoPedidos.IntegrationTests/Support/` (`SqlServerFixture` com Testcontainers aplicando `database/*.sql`, `ApiFactory`, Respawn, builders de dados, `FakeClock`)
+- [x] T025 `qa-guardian` lacra (`scripts/qa-seal.sh seal`) e commit `test(api): add architecture and error catalog tests`
 
 ### Implementação da fundação
-- [ ] T026 [P] `Domain`: exceções tipadas `ClienteInexistenteException`, `ProdutoInexistenteException`, `EstoqueInsuficienteException`, `ChaveReutilizadaException` em `backend/src/GestaoPedidos.Domain/`
-- [ ] T027 [P] `Application/Abstractions`: `ICommandHandler<,>`, `IQueryHandler<,>`, `IClock`, `IUnitOfWork` em `backend/src/GestaoPedidos.Application/Abstractions/`
-- [ ] T028 `Api/Errors`: `ErrorCatalog`, `ProblemDetailsFactory` (campos `type`, `title`, `status`, `detail`, `code`, `traceId`, `meta`, `errors`) e `GlobalExceptionHandler` (`IExceptionHandler`) + `StatusCodePages` para 404/415 em `backend/src/GestaoPedidos.Api/Errors/`
-- [ ] T029 `Infrastructure`: `GestaoPedidosDbContext` mapeando o schema dos scripts (sem migrations), `UnitOfWork` com execution strategy (`EnableRetryOnFailure`), `SystemClock` em `backend/src/GestaoPedidos.Infrastructure/`
-- [ ] T030 `Api/Program.cs`: composition root, OpenAPI nativo + Scalar em `/scalar`, health check do SQL em `/health`, logging com `traceId`
-- [ ] T031 [P] `Infrastructure/Resilience`: pipeline `Microsoft.Extensions.Resilience` (retry com backoff só para erros transitórios do SQL) para as leituras Dapper
-- [ ] T032 [P] `Application/Abstractions/Decorators`: `ValidationDecorator` (FluentValidation) e `LoggingDecorator` registrados no DI (padrão Decorator)
+- [x] T026 [P] `Domain`: exceções tipadas `ClienteInexistenteException`, `ProdutoInexistenteException`, `EstoqueInsuficienteException`, `ChaveReutilizadaException` em `backend/src/GestaoPedidos.Domain/`
+- [x] T027 [P] `Application/Abstractions`: `ICommandHandler<,>`, `IQueryHandler<,>`, `IClock`, `IUnitOfWork` em `backend/src/GestaoPedidos.Application/Abstractions/`
+- [x] T028 `Api/Errors`: `ErrorCatalog`, `ProblemDetailsFactory` (campos `type`, `title`, `status`, `detail`, `code`, `traceId`, `meta`, `errors`) e `GlobalExceptionHandler` (`IExceptionHandler`) + `StatusCodePages` para 404/415 em `backend/src/GestaoPedidos.Api/Errors/`
+- [x] T029 `Infrastructure`: `GestaoPedidosDbContext` mapeando o schema dos scripts (sem migrations), `UnitOfWork` com execution strategy (`EnableRetryOnFailure`), `SystemClock` em `backend/src/GestaoPedidos.Infrastructure/`
+- [x] T030 `Api/Program.cs`: composition root, OpenAPI nativo + Scalar em `/scalar`, health check do SQL em `/health`, logging com `traceId`
+- [x] T031 [P] `Infrastructure/Resilience`: pipeline `Microsoft.Extensions.Resilience` (retry com backoff só para erros transitórios do SQL) para as leituras Dapper
+- [x] T032 [P] `Application/Abstractions/Decorators`: `ValidationDecorator` (FluentValidation) e `LoggingDecorator` registrados no DI (padrão Decorator)
 
 **Ponto de verificação**: solução compila com `-warnaserror`, testes de arquitetura e do catálogo passam, `/health` responde 200 no compose.
 
@@ -75,25 +75,25 @@ description: "Lista de tarefas da feature Mini Gestão de Pedidos"
 **Objetivo**: criar pedido válido com estoque consistente e erros específicos · **Teste independente**: `POST /pedidos` válido cria; cada regra violada devolve o `code` esperado e nada muda
 
 ### Testes (qa-guardian, RED)
-- [ ] T033 [P] [US1] Unit `backend/tests/GestaoPedidos.UnitTests/Pedidos/PedidoTests.cs`: `Pedido.Criar` exige ≥ 1 item, quantidade > 0, calcula `ValorTotal`, congela `PrecoUnitario`, data pelo `IClock`
-- [ ] T034 [P] [US1] Unit `.../Pedidos/CriarPedidoValidatorTests.cs`: um teste por código de campo (`itens_vazio`, `itens_excedem_limite`, `produto_repetido`, `quantidade_invalida`, `cliente_id_invalido`, `produto_id_invalido`) e todos os problemas de uma vez
-- [ ] T035 [P] [US1] Unit `.../Pedidos/CriarPedidoHandlerTests.cs` (ports mockados): cliente inexistente, produto inexistente, estoque insuficiente (ordem por `ProdutoId`), sucesso, idempotência (mesma chave e mesmo hash devolve o original; hash diferente lança `ChaveReutilizada`)
-- [ ] T036 [P] [US1] Integração `backend/tests/GestaoPedidos.IntegrationTests/Pedidos/CriarPedidoTests.cs`: 201 + `Location` + total + estoque reduzido; um teste por `code` (`cliente_inexistente`, `produto_inexistente`, `estoque_insuficiente`, `chave_reutilizada`, `validacao_falhou` com `errors[]` completos e os códigos de campo acima, mais `chave_idempotencia_invalida` para `Idempotency-Key` que não é UUID) conferindo `status`, `code`, `type`, `traceId`, `meta`; nada gravado nem baixado quando falha; preço congelado após alterar o produto
-- [ ] T037 [P] [US1] Integração `.../Pedidos/ConcorrenciaEstoqueTests.cs`: 50 pedidos simultâneos pelo produto com 1 unidade → exatamente 1 × 201, 49 × 422 `estoque_insuficiente`, estoque final 0; pedidos com vários produtos em ordens diferentes não geram deadlock
-- [ ] T038 [P] [US1] Integração `.../Pedidos/IdempotenciaTests.cs`: 10 envios simultâneos da mesma chave → 1 pedido, estoque baixado uma vez, respostas apontando para o mesmo pedido; mesma chave com corpo diferente → 422; chaves diferentes e mesmo conteúdo → 2 pedidos; **com o estoque exatamente igual à quantidade pedida**, as requisições simultâneas com a mesma chave devolvem todas o mesmo pedido (a segunda não recebe 422 `estoque_insuficiente`); sem chave funciona
-- [ ] T039 [P] [US1] Integração `.../Pedidos/FalhaTransitoriaTests.cs`: com falha transitória do SQL injetada uma vez (interceptor), o pedido é criado uma única vez e o estoque é baixado uma única vez (FR-017)
-- [ ] T040 [P] [US1] Integração `.../RateLimiting/RateLimitTests.cs`: rajada de `POST /pedidos` → 429 `limite_requisicoes_excedido` com `Retry-After` e `meta.retryAfterSegundos`; limite configurável por opções (desligado nos demais testes)
-- [ ] T041 [P] [US1] Integração `.../RateLimiting/IpEncaminhadoTests.cs`: com `X-Forwarded-For` vindo de proxy confiável o limite é por cliente; vindo de origem não confiável o cabeçalho é ignorado
-- [ ] T042 [P] [US1] Integração `.../Errors/ErroPadraoTests.cs`: JSON malformado → 400 `validacao_falhou` com `errors[0].code = corpo_invalido` e `campo = "$"`; `Content-Type` inválido → 415 `formato_nao_suportado`; rota inexistente → 404 `recurso_nao_encontrado`; falha inesperada → 500 `erro_interno` sem vazar detalhe, com `traceId`; banco indisponível → 503 `banco_indisponivel`
-- [ ] T043 [US1] `qa-guardian` lacra e commit `test(api): add failing tests for order creation`
+- [x] T033 [P] [US1] Unit `backend/tests/GestaoPedidos.UnitTests/Pedidos/PedidoTests.cs`: `Pedido.Criar` exige ≥ 1 item, quantidade > 0, calcula `ValorTotal`, congela `PrecoUnitario`, data pelo `IClock`
+- [x] T034 [P] [US1] Unit `.../Pedidos/CriarPedidoValidatorTests.cs`: um teste por código de campo (`itens_vazio`, `itens_excedem_limite`, `produto_repetido`, `quantidade_invalida`, `cliente_id_invalido`, `produto_id_invalido`) e todos os problemas de uma vez
+- [x] T035 [P] [US1] Unit `.../Pedidos/CriarPedidoHandlerTests.cs` (ports mockados): cliente inexistente, produto inexistente, estoque insuficiente (ordem por `ProdutoId`), sucesso, idempotência (mesma chave e mesmo hash devolve o original; hash diferente lança `ChaveReutilizada`)
+- [x] T036 [P] [US1] Integração `backend/tests/GestaoPedidos.IntegrationTests/Pedidos/CriarPedidoTests.cs`: 201 + `Location` + total + estoque reduzido; um teste por `code` (`cliente_inexistente`, `produto_inexistente`, `estoque_insuficiente`, `chave_reutilizada`, `validacao_falhou` com `errors[]` completos e os códigos de campo acima, mais `chave_idempotencia_invalida` para `Idempotency-Key` que não é UUID) conferindo `status`, `code`, `type`, `traceId`, `meta`; nada gravado nem baixado quando falha; preço congelado após alterar o produto
+- [x] T037 [P] [US1] Integração `.../Pedidos/ConcorrenciaEstoqueTests.cs`: 50 pedidos simultâneos pelo produto com 1 unidade → exatamente 1 × 201, 49 × 422 `estoque_insuficiente`, estoque final 0; pedidos com vários produtos em ordens diferentes não geram deadlock
+- [x] T038 [P] [US1] Integração `.../Pedidos/IdempotenciaTests.cs`: 10 envios simultâneos da mesma chave → 1 pedido, estoque baixado uma vez, respostas apontando para o mesmo pedido; mesma chave com corpo diferente → 422; chaves diferentes e mesmo conteúdo → 2 pedidos; **com o estoque exatamente igual à quantidade pedida**, as requisições simultâneas com a mesma chave devolvem todas o mesmo pedido (a segunda não recebe 422 `estoque_insuficiente`); sem chave funciona
+- [x] T039 [P] [US1] Integração `.../Pedidos/FalhaTransitoriaTests.cs`: com falha transitória do SQL injetada uma vez (interceptor), o pedido é criado uma única vez e o estoque é baixado uma única vez (FR-017)
+- [x] T040 [P] [US1] Integração `.../RateLimiting/RateLimitTests.cs`: rajada de `POST /pedidos` → 429 `limite_requisicoes_excedido` com `Retry-After` e `meta.retryAfterSegundos`; limite configurável por opções (desligado nos demais testes)
+- [x] T041 [P] [US1] Integração `.../RateLimiting/IpEncaminhadoTests.cs`: com `X-Forwarded-For` vindo de proxy confiável o limite é por cliente; vindo de origem não confiável o cabeçalho é ignorado
+- [x] T042 [P] [US1] Integração `.../Errors/ErroPadraoTests.cs`: JSON malformado → 400 `validacao_falhou` com `errors[0].code = corpo_invalido` e `campo = "$"`; `Content-Type` inválido → 415 `formato_nao_suportado`; rota inexistente → 404 `recurso_nao_encontrado`; falha inesperada → 500 `erro_interno` sem vazar detalhe, com `traceId`; banco indisponível → 503 `banco_indisponivel`
+- [x] T043 [US1] `qa-guardian` lacra e commit `test(api): add failing tests for order creation`
 
 ### Implementação
-- [ ] T044 [P] [US1] `Domain/Pedidos`: `Pedido` (fábrica `Pedido.Criar`) e `ItemPedido`; `Cliente` e `Produto` em `backend/src/GestaoPedidos.Domain/`
-- [ ] T045 [P] [US1] `Application/Pedidos/Commands/CriarPedido/`: `CriarPedidoCommand`, `CriarPedidoValidator` (≥ 1 e ≤ 50 itens, quantidade > 0, sem produto repetido), `CriarPedidoResponse`, ports `IPedidoRepository`, `IClienteRepository`, `IProdutoRepository`, `IIdempotenciaRepository` em `Application/Pedidos/Ports/`
-- [ ] T046 [US1] `Application/Pedidos/Commands/CriarPedido/CriarPedidoHandler.cs`: fluxo do plano (`sp_getapplock` pela chave no início da transação → chave registrada? mesmo hash devolve o pedido original, hash diferente lança `ChaveReutilizada` → cliente → produtos → baixa atômica em ordem de `ProdutoId` → `Pedido.Criar` → persistir com a chave na mesma transação)
-- [ ] T047 [US1] `Infrastructure/Persistence`: repositórios EF; baixa atômica `UPDATE Produtos SET Estoque = Estoque - @q WHERE Id = @id AND Estoque >= @q` (0 linhas → `EstoqueInsuficienteException`); tratamento da violação de PK (2627) da chave de idempotência devolvendo o pedido da vencedora
-- [ ] T048 [US1] `Api/Endpoints/PedidosEndpoints.cs`: `POST /pedidos` (`Idempotency-Key` opcional, 201 + `Location`, 200 no reenvio), `MapGroup`, `TypedResults`, política de rate limiting nomeada (token bucket) + limite global por IP em `Api/RateLimiting/`; `UseForwardedHeaders` com proxies confiáveis configuráveis (o IP real do cliente atrás do nginx); registrar `docs/decisions/ADR-010-ip-do-cliente-atras-do-proxy.md`
-- [ ] T049 [US1] Registrar handlers, decorators, resiliência e rate limiting no DI; rodar `dotnet test backend` até verde
+- [x] T044 [P] [US1] `Domain/Pedidos`: `Pedido` (fábrica `Pedido.Criar`) e `ItemPedido`; `Cliente` e `Produto` em `backend/src/GestaoPedidos.Domain/`
+- [x] T045 [P] [US1] `Application/Pedidos/Commands/CriarPedido/`: `CriarPedidoCommand`, `CriarPedidoValidator` (≥ 1 e ≤ 50 itens, quantidade > 0, sem produto repetido), `CriarPedidoResponse`, ports `IPedidoRepository`, `IClienteRepository`, `IProdutoRepository`, `IIdempotenciaRepository` em `Application/Pedidos/Ports/`
+- [x] T046 [US1] `Application/Pedidos/Commands/CriarPedido/CriarPedidoHandler.cs`: fluxo do plano (`sp_getapplock` pela chave no início da transação → chave registrada? mesmo hash devolve o pedido original, hash diferente lança `ChaveReutilizada` → cliente → produtos → baixa atômica em ordem de `ProdutoId` → `Pedido.Criar` → persistir com a chave na mesma transação)
+- [x] T047 [US1] `Infrastructure/Persistence`: repositórios EF; baixa atômica `UPDATE Produtos SET Estoque = Estoque - @q WHERE Id = @id AND Estoque >= @q` (0 linhas → `EstoqueInsuficienteException`); trava `sp_getapplock` por chave (retorno negativo falha a requisição) no lugar de tratar a violação de PK 2627
+- [x] T048 [US1] `Api/Endpoints/PedidosEndpoints.cs`: `POST /pedidos` (`Idempotency-Key` opcional, 201 + `Location`, 200 no reenvio), `MapGroup`, `TypedResults`, política de rate limiting nomeada (token bucket) + limite global por IP em `Api/RateLimiting/`; `UseForwardedHeaders` com proxies confiáveis configuráveis (o IP real do cliente atrás do nginx); registrar `docs/decisions/ADR-010-ip-do-cliente-atras-do-proxy.md`
+- [x] T049 [US1] Registrar handlers, decorators, resiliência e rate limiting no DI; rodar `dotnet test backend` até verde
 
 **Ponto de verificação**: US1 funcional isolada (MVP) e todos os testes da US1 verdes.
 
@@ -102,51 +102,51 @@ description: "Lista de tarefas da feature Mini Gestão de Pedidos"
 **Objetivo**: listagem filtrada e paginada · **Teste independente**: seed + filtros por cliente, período e ambos, páginas
 
 ### Testes (qa-guardian, RED)
-- [ ] T050 [P] [US2] Unit `.../Pedidos/ListarPedidosValidatorTests.cs`: `page` < 1, `pageSize` fora de 1–100, `dataInicio` > `dataFim`, data inválida (todos os problemas juntos)
-- [ ] T051 [P] [US2] Integração `.../Pedidos/ListarPedidosTests.cs`: ordem `DataPedido DESC, Id DESC`, filtro por cliente, período inclusivo nas duas pontas (mesma data inicial e final = dia inteiro), paginação sem repetir nem omitir, página além da última, totais, 400 com `pagina_invalida`, `tamanho_pagina_invalido`, `periodo_invertido`, `data_invalida`
-- [ ] T052 [US2] `qa-guardian` lacra e commit `test(api): add failing tests for order listing`
+- [x] T050 [P] [US2] Unit `.../Pedidos/ListarPedidosValidatorTests.cs`: `page` < 1, `pageSize` fora de 1–100, `dataInicio` > `dataFim`, data inválida (todos os problemas juntos)
+- [x] T051 [P] [US2] Integração `.../Pedidos/ListarPedidosTests.cs`: ordem `DataPedido DESC, Id DESC`, filtro por cliente, período inclusivo nas duas pontas (mesma data inicial e final = dia inteiro), paginação sem repetir nem omitir, página além da última, totais, 400 com `pagina_invalida`, `tamanho_pagina_invalido`, `periodo_invertido`, `data_invalida`
+- [x] T052 [US2] `qa-guardian` lacra e commit `test(api): add failing tests for order listing`
 
 ### Implementação
-- [ ] T053 [P] [US2] `Application/Pedidos/Queries/ListarPedidos/` (query, validator, resposta paginada) e port `IPedidoQueries` em `Application/Pedidos/Ports/`
-- [ ] T054 [US2] `Infrastructure/Queries/PedidoQueries.cs` (Dapper): intervalo `[dataInicio 00:00 UTC, dataFim + 1 dia)`, `OFFSET/FETCH`, `COUNT`, SQL parametrizado e sargável
-- [ ] T055 [US2] `GET /pedidos` em `Api/Endpoints/PedidosEndpoints.cs`; `dotnet test backend` verde
+- [x] T053 [P] [US2] `Application/Pedidos/Queries/ListarPedidos/` (query, validator, resposta paginada) e port `IPedidoQueries` em `Application/Pedidos/Ports/`
+- [x] T054 [US2] `Infrastructure/Queries/PedidoQueries.cs` (Dapper): intervalo `[dataInicio 00:00 UTC, dataFim + 1 dia)`, `OFFSET/FETCH`, `COUNT`, SQL parametrizado e sargável
+- [x] T055 [US2] `GET /pedidos` em `Api/Endpoints/PedidosEndpoints.cs`; `dotnet test backend` verde
 
 ## Fase 5: US3 — Top 5 clientes (P2)
 
 **Objetivo**: relatório correto por cliente · **Teste independente**: seed conhecido contra ranking calculado à mão
 
 ### Testes (qa-guardian, RED)
-- [ ] T056 [P] [US3] Integração `.../Relatorios/TopClientesTests.cs`: exatamente 5 ordenados por valor desc, homônimos separados, desempate por nome, cliente sem pedido no período ausente, menos de 5 clientes, 400 `periodo_obrigatorio` / `periodo_invertido`
-- [ ] T057 [US3] `qa-guardian` lacra e commit `test(api): add failing tests for top customers report`
+- [x] T056 [P] [US3] Integração `.../Relatorios/TopClientesTests.cs`: exatamente 5 ordenados por valor desc, homônimos separados, desempate por nome, cliente sem pedido no período ausente, menos de 5 clientes, 400 `periodo_obrigatorio` / `periodo_invertido`
+- [x] T057 [US3] `qa-guardian` lacra e commit `test(api): add failing tests for top customers report`
 
 ### Implementação
-- [ ] T058 [P] [US3] `Application/Relatorios/Queries/TopClientes/` (query, validator, resposta) e port `IRelatorioQueries` em `Application/Relatorios/Ports/`
-- [ ] T059 [US3] `Infrastructure/Queries/RelatorioQueries.cs` (Dapper): agrupa por `ClienteId`, `INNER JOIN`, intervalo semiaberto, `ORDER BY Total DESC, Nome`, `TOP 5`
-- [ ] T060 [US3] `Api/Endpoints/RelatoriosEndpoints.cs`: `GET /relatorios/top-clientes`
+- [x] T058 [P] [US3] `Application/Relatorios/Queries/TopClientes/` (query, validator, resposta) e port `IRelatorioQueries` em `Application/Relatorios/Ports/`
+- [x] T059 [US3] `Infrastructure/Queries/RelatorioQueries.cs` (Dapper): agrupa por `ClienteId`, `INNER JOIN`, intervalo semiaberto, `ORDER BY Total DESC, Nome`, `TOP 5`
+- [x] T060 [US3] `Api/Endpoints/RelatoriosEndpoints.cs`: `GET /relatorios/top-clientes`
 
 ## Fase 6: US5 — Consultas de apoio e detalhe (P3)
 
 ### Testes (qa-guardian, RED)
-- [ ] T061 [P] [US5] Integração `.../Apoio/ClientesProdutosTests.cs`: `GET /clientes` em ordem alfabética, `GET /produtos` com `sku`, `preco`, `estoque`
-- [ ] T062 [P] [US5] Integração `.../Pedidos/ObterPedidoTests.cs`: detalhe com itens e subtotais; 404 `pedido_nao_encontrado` com `meta.pedidoId`
-- [ ] T063 [US5] `qa-guardian` lacra e commit `test(api): add failing tests for lookups and order detail`
+- [x] T061 [P] [US5] Integração `.../Apoio/ClientesProdutosTests.cs`: `GET /clientes` em ordem alfabética, `GET /produtos` com `sku`, `preco`, `estoque`
+- [x] T062 [P] [US5] Integração `.../Pedidos/ObterPedidoTests.cs`: detalhe com itens e subtotais; 404 `pedido_nao_encontrado` com `meta.pedidoId`
+- [x] T063 [US5] `qa-guardian` lacra e commit `test(api): add failing tests for lookups and order detail`
 
 ### Implementação
-- [ ] T064 [P] [US5] Queries `Clientes` e `Produtos` e `ObterPedido` em `Application/` + `Infrastructure/Queries/` (Dapper)
-- [ ] T065 [US5] `Api/Endpoints/ClientesEndpoints.cs`, `ProdutosEndpoints.cs` e `GET /pedidos/{id}`
+- [x] T064 [P] [US5] Queries `Clientes` e `Produtos` e `ObterPedido` em `Application/` + `Infrastructure/Queries/` (Dapper)
+- [x] T065 [US5] `Api/Endpoints/ClientesEndpoints.cs`, `ProdutosEndpoints.cs` e `GET /pedidos/{id}`
 
 ## Fase 7: Contrato e CI do backend
 
-- [ ] T066 [P] Teste de contrato `backend/tests/GestaoPedidos.IntegrationTests/Contrato/OpenApiContractTests.cs` (qa-guardian): o documento OpenAPI gerado pela API contém todos os caminhos, métodos, status e `code` de `specs/001-gestao-pedidos/contracts/openapi.yaml`
-- [ ] T067 [P] Conferir `.github/workflows/pr-checks.yml` (ajustado no PR 1: um `dotnet test` por projeto, `e2e` só com `frontend/package.json`, passo `TZ=Pacific/Kiritimati` no front) e garantir que o job `backend` passa no PR 2 com format, build `-warnaserror`, unit, arquitetura e integração (Testcontainers)
-- [ ] T068 Serviço `api` em `docker-compose.yml` (porta 5080, `depends_on: db-init` concluído) e `.env.example` atualizado; `docker compose up --build` sobe banco + API
+- [x] T066 [P] Teste de contrato `backend/tests/GestaoPedidos.IntegrationTests/Contrato/OpenApiContractTests.cs` (qa-guardian): o documento OpenAPI gerado pela API contém todos os caminhos, métodos, status e `code` de `specs/001-gestao-pedidos/contracts/openapi.yaml`
+- [x] T067 [P] Conferir `.github/workflows/pr-checks.yml` (ajustado no PR 1: um `dotnet test` por projeto, `e2e` só com `frontend/package.json`, passo `TZ=Pacific/Kiritimati` no front) e garantir que o job `backend` passa no PR 2 com format, build `-warnaserror`, unit, arquitetura e integração (Testcontainers)
+- [x] T068 Serviço `api` em `docker-compose.yml` (porta 5080, `depends_on: db-init` concluído) e `.env.example` atualizado; `docker compose up --build` sobe banco + API
 
 ## Gates do PR 2
 
-- [ ] T069 `qa-guardian`: validação com `scripts/qa-seal.sh check` e veredito APROVADO (conferir cada `code` do catálogo coberto)
-- [ ] T070 `scripts/check-guardrails.sh --diff origin/main` e `scripts/check-docs-drift.sh`
-- [ ] T071 `code-reviewer` sobre o diff final, sem Bloqueante
-- [ ] T072 `/retro`: `docs/domain.md`, `docs/patterns/` com `arquivo:linha`, `docs/playbooks/claude-log.md`, memória
+- [x] T069 `qa-guardian`: validação com `scripts/qa-seal.sh check` e veredito APROVADO (conferir cada `code` do catálogo coberto)
+- [x] T070 `scripts/check-guardrails.sh --diff origin/main` e `scripts/check-docs-drift.sh`
+- [x] T071 `code-reviewer` sobre o diff final, sem Bloqueante
+- [x] T072 `/retro`: `docs/domain.md`, `docs/patterns/` com `arquivo:linha`, `docs/playbooks/claude-log.md`, memória
 - [ ] T073 `git push`, PR `feat(db,api,docker,ci): ...`, `ci-ok` e `governance` verdes, merge por merge commit
 
 ---
