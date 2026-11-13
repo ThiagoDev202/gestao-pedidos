@@ -11,5 +11,6 @@
 | [ADR-007](ADR-007-resiliencia.md) | Retry e rate limiting, sem circuit breaker |
 | [ADR-008](ADR-008-cqrs-leve.md) | CQRS leve, sem MediatR |
 | [ADR-009](ADR-009-padrao-de-erros.md) | Padrão único de erros: ProblemDetails com códigos estáveis |
+| [ADR-010](ADR-010-ip-do-cliente-atras-do-proxy.md) | IP do cliente atrás do proxy e rate limiting |
 
 Formato: contexto, decisão, alternativas, consequências. Criada por `/retro` quando uma entrega toma decisão de arquitetura.
