@@ -35,6 +35,8 @@ public static class WebApplicationExtensions
         app.MapOpenApi();
         app.MapScalarApiReference();
         app.MapPedidos();
+        app.MapRelatorios();
+        app.MapApoio();
         return app;
     }
 }
