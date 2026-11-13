@@ -23,7 +23,7 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
       has_frontend: ${{ steps.exists.outputs.frontend }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: exists
         run: if [ -f frontend/package.json ]; then echo frontend=true >> "$GITHUB_OUTPUT"; else echo frontend=false >> "$GITHUB_OUTPUT"; fi
       - uses: dorny/paths-filter@v3
@@ -38,7 +38,7 @@ jobs:
   docs-drift:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: scripts/check-docs-drift.sh
 
   backend:
@@ -50,7 +50,7 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -75,7 +75,7 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -124,7 +124,7 @@ jobs:
     if: needs.changes.outputs.docker == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker compose config -q
       - run: docker compose build
 
