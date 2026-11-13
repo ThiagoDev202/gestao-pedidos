@@ -39,6 +39,6 @@ public static class ServiceCollectionDecoratorExtensions
             return ActivatorUtilities.CreateInstance(provider, descriptor.ImplementationType);
         }
 
-        return descriptor.ImplementationInstance!;
+        return descriptor.ImplementationInstance ?? throw new InvalidOperationException("Registro sem implementação para decorar.");
     }
 }

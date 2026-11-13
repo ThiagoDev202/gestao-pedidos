@@ -9,7 +9,7 @@ internal static class ErrosDeBanco
 
     public static bool EhIndisponibilidade(Exception exception)
     {
-        for (var atual = exception; atual is not null; atual = atual.InnerException!)
+        for (var atual = exception; atual is not null; atual = atual.InnerException)
         {
             if (atual is RetryLimitExceededException)
             {
