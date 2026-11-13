@@ -1,3 +1,5 @@
+using GestaoPedidos.Domain.Excecoes;
+
 namespace GestaoPedidos.Domain.Pedidos;
 
 public sealed class Pedido
@@ -20,6 +22,29 @@ public sealed class Pedido
 
     public static Pedido Criar(int clienteId, IReadOnlyCollection<ItemParaPedido> itens, DateTime agoraUtc)
     {
-        throw new NotImplementedException();
+        if (itens.Count == 0)
+        {
+            throw new PedidoInvalidoException("O pedido precisa de ao menos um item.");
+        }
+
+        var invalido = itens.FirstOrDefault(item => item.Quantidade <= 0);
+        if (invalido is not null)
+        {
+            throw new PedidoInvalidoException($"A quantidade do produto {invalido.ProdutoId} deve ser maior que zero.");
+        }
+
+        var pedido = new Pedido
+        {
+            ClienteId = clienteId,
+            DataPedido = DateTime.SpecifyKind(agoraUtc, DateTimeKind.Utc),
+        };
+
+        foreach (var item in itens)
+        {
+            pedido._itens.Add(new ItemPedido(item.ProdutoId, item.Quantidade, item.PrecoUnitario));
+        }
+
+        pedido.ValorTotal = pedido._itens.Sum(item => item.Subtotal);
+        return pedido;
     }
 }
