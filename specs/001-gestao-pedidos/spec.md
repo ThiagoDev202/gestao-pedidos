@@ -134,7 +134,9 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **FR-012**: O sistema DEVE retornar o relatório dos 5 clientes com maior valor total de pedidos no período informado, agrupando por cliente (não por nome), do maior para o menor valor, com desempate por nome.
 - **FR-013**: O relatório DEVE exigir o período e recusar período ausente ou invertido.
 - **FR-014**: O sistema DEVE oferecer consulta de clientes, de produtos (com preço e estoque) e do detalhe de um pedido.
-- **FR-015**: Respostas de erro DEVEM ter formato padronizado e legível, distinguindo validação (dados malformados), regra de negócio (dados válidos que violam uma regra) e recurso não encontrado.
+- **FR-015**: Todas as respostas de erro DEVEM seguir o mesmo formato padronizado, com um código estável e específico para cada situação (nunca uma mensagem genérica quando existe causa conhecida), distinguindo validação, regra de negócio, recurso não encontrado, limite de taxa e falha interna.
+- **FR-023**: Erros de validação DEVEM listar todos os problemas de uma vez, cada um indicando o campo afetado.
+- **FR-024**: A interface DEVE mostrar, para cada código de erro, uma mensagem específica em português que diga o que aconteceu e o que o usuário pode fazer (por exemplo, produto e quantidade disponível no erro de estoque), colocar erros de campo junto do campo, e, em falhas inesperadas, exibir um código de suporte.
 - **FR-016**: O sistema DEVE limitar a taxa de criação de pedidos por origem de rede, recusando o excedente com indicação de quando tentar novamente.
 - **FR-017**: O sistema DEVE recuperar-se automaticamente de falhas transitórias do armazenamento sem duplicar pedidos nem baixar o estoque duas vezes.
 - **FR-018**: A interface DEVE oferecer listagem de pedidos com filtros por cliente e período, paginação e estados de vazio, carregamento e erro.
@@ -158,6 +160,7 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **SC-001**: Um Operador cria um pedido de 3 itens pela interface em menos de 1 minuto, sem treinamento.
 - **SC-002**: 100% das tentativas de pedido inválido (cliente inexistente, sem itens, quantidade inválida, estoque insuficiente) são recusadas sem alterar nenhum estoque.
 - **SC-003**: Em teste com 50 pedidos simultâneos pelo último item de um produto, exatamente 1 é aceito e o estoque final é 0.
+- **SC-009**: 100% dos códigos de erro do catálogo têm teste na API e mensagem específica na interface; nenhuma tela exibe texto técnico cru de erro.
 - **SC-008**: Em teste com 10 envios simultâneos da mesma requisição com a mesma chave de idempotência, exatamente 1 pedido é criado e o estoque é baixado uma única vez.
 - **SC-004**: Com a carga de exemplo (dezenas de milhares de pedidos), a primeira página da listagem e o relatório de melhores clientes aparecem em menos de 1 segundo para o usuário.
 - **SC-005**: O ranking dos 5 melhores clientes coincide em 100% com o cálculo manual sobre os dados de exemplo, inclusive com clientes homônimos e empates.

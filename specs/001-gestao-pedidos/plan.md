@@ -80,7 +80,7 @@ backend/
 │   │   └── Resilience/  Time/
 │   └── GestaoPedidos.Api/
 │       ├── Endpoints/ (Pedidos, Relatorios, Clientes, Produtos)
-│       ├── Errors/ (ProblemDetails, IExceptionHandler)  RateLimiting/  Program.cs
+│       ├── Errors/ (ErrorCatalog, ProblemDetailsFactory, IExceptionHandler)  RateLimiting/  Program.cs
 └── tests/
     ├── GestaoPedidos.UnitTests/  GestaoPedidos.ArchitectureTests/  GestaoPedidos.IntegrationTests/
 
@@ -88,7 +88,7 @@ frontend/
 ├── Dockerfile  nginx.conf  package.json  vite.config.ts  playwright.config.ts
 ├── src/
 │   ├── app/  features/pedidos/{api,components,hooks,schemas,pages}  features/relatorios/
-│   └── shared/{api,components/ui,lib}
+│   └── shared/{api (http-client, ApiError, error-messages),components/ui (ErrorAlert, FieldError),lib}
 └── e2e/
 
 docker-compose.yml

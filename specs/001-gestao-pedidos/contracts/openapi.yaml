@@ -316,11 +316,12 @@ components:
           type: integer
     Problema:
       type: object
-      description: ProblemDetails (RFC 9457)
-      required: [status, title]
+      description: ProblemDetails (RFC 9457) com extensões. Catálogo completo em docs/policies/errors.md.
+      required: [type, title, status, detail, code, traceId]
       properties:
         type:
           type: string
+          description: urn:gestaopedidos:erro:<code>
         title:
           type: string
         status:
@@ -329,15 +330,54 @@ components:
           type: string
         code:
           type: string
-          description: Presente nos erros 422
-          enum: [cliente_inexistente, produto_inexistente, estoque_insuficiente]
-        errors:
+          enum:
+            - validacao_falhou
+            - pedido_nao_encontrado
+            - recurso_nao_encontrado
+            - formato_nao_suportado
+            - cliente_inexistente
+            - produto_inexistente
+            - estoque_insuficiente
+            - chave_reutilizada
+            - limite_requisicoes_excedido
+            - erro_interno
+            - banco_indisponivel
+        traceId:
+          type: string
+        meta:
           type: object
-          description: Presente nos erros 400; campo para lista de mensagens
-          additionalProperties:
-            type: array
-            items:
-              type: string
+          description: Dados estruturados da ocorrência (ids, quantidades).
+          additionalProperties: true
+        errors:
+          type: array
+          description: Presente no 400; todos os problemas de uma vez.
+          items:
+            $ref: '#/components/schemas/ErroDeCampo'
+    ErroDeCampo:
+      type: object
+      required: [campo, code, mensagem]
+      properties:
+        campo:
+          type: string
+          description: Caminho do campo (clienteId, itens[0].quantidade, page, dataInicio, Idempotency-Key)
+        code:
+          type: string
+          enum:
+            - corpo_invalido
+            - cliente_id_invalido
+            - itens_vazio
+            - itens_excedem_limite
+            - produto_id_invalido
+            - quantidade_invalida
+            - produto_repetido
+            - chave_idempotencia_invalida
+            - pagina_invalida
+            - tamanho_pagina_invalido
+            - data_invalida
+            - periodo_obrigatorio
+            - periodo_invertido
+        mensagem:
+          type: string
   responses:
     Validacao:
       description: Dados malformados ou fora dos limites

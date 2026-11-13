@@ -43,6 +43,8 @@ Sem `NEEDS CLARIFICATION` pendente: as duas decisões de escopo (produto repetid
 - **Decisão**: ProblemDetails (RFC 9457). 400 validação (com mapa `errors`), 422 regra de negócio (com `code`: `cliente_inexistente`, `produto_inexistente`, `estoque_insuficiente`), 404 pedido inexistente, 429 excesso de requisições, 201 + `Location`.
 - **Razão**: separa "dados malformados" de "dados válidos que violam regra", como pede a spec (FR-015).
 
+- **Padrão completo** (campos, catálogo de códigos, `meta`, regras de backend e frontend): `docs/policies/errors.md` e ADR-009. Erros de validação listam todos os problemas; cada `code` é estável e tem mensagem específica na interface.
+
 ## 8. Paginação
 - **Decisão**: `page`/`pageSize` com `OFFSET/FETCH` e `ORDER BY DataPedido DESC, Id DESC` (desempate estável), mais `COUNT` para totais.
 - **Razão**: simples e suficiente para ~50 mil linhas; o índice `IX_Pedidos_DataPedido` cobre ordenação e filtro.
