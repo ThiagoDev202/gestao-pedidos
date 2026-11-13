@@ -9,7 +9,7 @@ public sealed class IdempotenciaRepository(GestaoPedidosDbContext contexto) : II
     {
         var recurso = chave.ToString();
         await contexto.Database.ExecuteSqlInterpolatedAsync(
-            $"EXEC sp_getapplock @Resource = {recurso}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 30000",
+            $"DECLARE @r int; EXEC @r = sp_getapplock @Resource = {recurso}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 30000; IF @r < 0 THROW 50001, N'Não foi possível adquirir a trava de idempotência.', 1;",
             cancellationToken);
     }
 
