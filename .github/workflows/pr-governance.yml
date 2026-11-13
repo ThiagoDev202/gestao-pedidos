@@ -1,0 +1,43 @@
+name: PR governance
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-governance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  governance:
+    name: governance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+      - name: Fetch PR commits without checking them out
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: git fetch --no-tags origin "+refs/pull/${PR_NUMBER}/head:refs/remotes/pr/head"
+      - name: Use scripts and maintainers from the base branch
+        run: |
+          mkdir -p "$RUNNER_TEMP/gov"
+          cp scripts/check-pr.sh scripts/check-guardrails.sh .github/MAINTAINERS "$RUNNER_TEMP/gov/"
+      - name: Guardrails on the PR diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash "$RUNNER_TEMP/gov/check-guardrails.sh" --diff "$BASE_SHA" refs/remotes/pr/head
+      - name: Branch, commits, title, area, scope and tests
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REF: ${{ github.head_ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: MAINTAINERS_FILE="$RUNNER_TEMP/gov/MAINTAINERS" bash "$RUNNER_TEMP/gov/check-pr.sh" "$BASE_SHA" refs/remotes/pr/head
