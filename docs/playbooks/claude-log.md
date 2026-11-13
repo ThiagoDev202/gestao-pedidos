@@ -14,3 +14,12 @@ Alimentado pelo `/retro` a cada PR; vira a seção "Como usei o Claude" do READM
   - Arquivos herdados do projeto de referência (`known-issues.md`, `backlog.md`) e tela de relatório fora da spec: removidos (Princípio VII).
   - Scripts meus com falhas: regex inline em `[[ =~ ]]`, edição em lote que casou o trecho errado e duplicou o YAML (restaurado do git), numeração de tarefas com marcador que a regex não reconhecia.
 - **Lição**: toda regra "só olha X" de guardrail precisa de teste com um caso que deve falhar e outro que deve passar.
+
+## PR 2: backend (2026-11-13)
+- **Funcionou bem**: `qa-guardian` escreveu 251 testes antes do código (unitários, arquitetura, integração com SQL Server real) e lacrou; o `code-reviewer` achou falhas que passavam nos testes: rate limit contornável com `X-Forwarded-For` forjado (a sub-rede inteira do compose era confiável, incluindo o gateway do host), `meta.disponivel` desatualizado quando se perde a corrida pelo último item, item `null` no JSON virando 500.
+- **O Claude errou e foi corrigido**:
+  - Confiar na sub-rede do compose em vez do IP do proxy: contradizia o ADR-010. Correção: encaminhamento desligado até existir o nginx, e `KnownNetworks` removido.
+  - Disse que o item nulo já devolvia 400 sem verificar; o teste do `qa-guardian` provou o 500.
+  - `PedidoInvalidoException` mapeada para um código fora do catálogo (`pedido_invalido`); passou a carregar códigos que já existem.
+  - Retorno de `sp_getapplock` ignorado; `!` para silenciar nulos; doc exigia `meta.maximo` que o código nunca emitiu (doc corrigido).
+- **Lição**: afirmação sobre comportamento sem requisição ou teste é hipótese; o teste de arquitetura também rejeita tipos gerados pelo compilador (`[x]` como argumento).
