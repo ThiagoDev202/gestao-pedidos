@@ -25,4 +25,5 @@ Glossário e regras de negócio. Hipótese até confirmada no código (Princípi
 7. Listagem: paginada (`page` ≥ 1, `pageSize` 1–100), ordenada por `DataPedido` decrescente, filtrável por cliente e período.
 8. Top clientes: os 5 clientes de maior valor total de pedidos no período, agrupados por **cliente** (não por nome), desempate por nome.
 9. Reenvio com a mesma `Idempotency-Key` e o mesmo corpo devolve o pedido original, sem novo efeito; a mesma chave com corpo diferente é recusada (422 `chave_reutilizada`).
-10. Todo erro segue o padrão de `docs/policies/errors.md`.
+10. Hash de idempotência: SHA-256 hexadecimal minúsculo de `"{ClienteId}|"` + itens ordenados por produto como `produtoId:quantidade` separados por vírgula (`CriarPedidoHandler.CalcularHash`).
+11. Todo erro segue o padrão de `docs/policies/errors.md`.
