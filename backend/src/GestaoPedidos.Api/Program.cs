@@ -1,6 +1,12 @@
-var app = WebApplication.CreateBuilder(args).Build();
+using GestaoPedidos.Api.Composition;
 
-app.MapGet("/health", () => Results.Ok());
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddGestaoPedidos(builder.Configuration);
+
+var app = builder.Build();
+
+app.UseGestaoPedidos();
 
 app.Run();
 
