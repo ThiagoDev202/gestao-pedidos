@@ -9,7 +9,7 @@ Pendências: nenhuma
 
 Aplicação de cadastro e consulta de pedidos de clientes. Duas camadas no mesmo repositório: `backend/` (.NET, Clean Architecture, SQL Server) e `frontend/` (React + TypeScript). Banco versionado em `database/` e orquestração em `docker-compose.yml`.
 
-Contexto obrigatório antes de `/speckit-specify` e `/speckit-plan`: `docs/domain.md`, `docs/known-issues.md` e o doc da área afetada (índice em `CLAUDE.md`).
+Contexto obrigatório antes de `/speckit-specify` e `/speckit-plan`: `docs/domain.md` e o doc da área afetada (índice em `CLAUDE.md`).
 
 ## Idioma do projeto (NÃO NEGOCIÁVEL)
 
@@ -47,7 +47,7 @@ Documentação é hipótese até ser confirmada no código. Toda spec e todo pla
 O schema nasce de `database/*.sql`, idempotentes e executados automaticamente no `docker compose up`. O EF Core MUST NOT criar nem migrar o schema. Índice novo MUST ter justificativa com plano de execução (`STATISTICS IO`, plano real) registrada em `docs/playbooks/query-debug.md` ou no plano.
 
 ### VII. Simplicidade e mudança cirúrgica
-Fazer o menor conjunto de mudanças que cumpre a spec. Padrão de projeto (GoF) só quando resolve um problema real e está nomeado no plano; abstração, dependência ou configuração que a spec não pede MUST NOT entrar. Problemas fora do escopo encontrados no caminho MUST ser registrados em `docs/known-issues.md`, não corrigidos de carona.
+Fazer o menor conjunto de mudanças que cumpre a spec. Padrão de projeto (GoF) só quando resolve um problema real e está nomeado no plano; abstração, dependência ou configuração que a spec não pede MUST NOT entrar. Problemas fora do escopo encontrados no caminho MUST virar issue do GitHub, não ser corrigidos de carona.
 
 ## Restrições técnicas
 

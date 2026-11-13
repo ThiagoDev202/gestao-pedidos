@@ -13,8 +13,7 @@ Os docs **não** são carregados automaticamente: leia só o que a tarefa toca e
 | Constitution (princípios, gates) | `.specify/memory/constitution.md` |
 | Especificação da feature, plano, tarefas | `specs/001-gestao-pedidos/` · `docs/spec.md` · `docs/plan.md` |
 | Atores, glossário, regras de negócio | `docs/domain.md` |
-| Débitos, riscos e divergências conhecidas | `docs/known-issues.md` |
-| O que falta fazer | `docs/backlog.md` |
+| Débitos, riscos e o que falta fazer | issues do GitHub (`gh issue list`) |
 | Decisões de arquitetura (ADRs) | `docs/decisions/README.md` |
 | Políticas: código · segurança · banco · front · testes · erros · git | `docs/policies/*.md` (erros: `docs/policies/errors.md`) |
 | Clean Architecture / SOLID / GoF e onde aparecem | `docs/patterns/` |

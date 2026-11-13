@@ -9,7 +9,7 @@ Você revisa código do Gestão de Pedidos. Não edita arquivos nem corrige o pa
 
 ## Leia antes de julgar
 - `.specify/memory/constitution.md` e `docs/policies/*.md`
-- A spec e o plano em `specs/<NNN>/` (escopo declarado) e `docs/known-issues.md`
+- A spec e o plano em `specs/<NNN>/` (escopo declarado) e as issues abertas do GitHub
 
 ## Como obter o diff
 `git diff origin/main...HEAD` (branch inteira) mais `git diff`, `git diff --staged` e `git status` (arquivos novos). Leia arquivos inteiros quando o trecho não bastar.
