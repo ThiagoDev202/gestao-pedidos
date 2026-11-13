@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+msg_file="$1"
+body=$(sed '/^# -\{24\} >8 -\{24\}$/,$d' "$msg_file" | grep -v '^#')
+subject=$(printf '%s\n' "$body" | grep -m1 -v '^[[:space:]]*$')
+types='feat|fix|refactor|perf|test|docs|style|build|ci|chore'
+scopes='api|web|db|e2e|docker|ci|docs|ai'
+subject_re="^($types)(\(($scopes)(,($scopes))*\))?!?: .{1,72}$"
+exempt_re='^(Merge (branch|pull request|remote-tracking)|Revert "|fixup! |squash! )'
+
+if printf '%s\n' "$body" | grep -qiE '^Co-Authored-By: .*(claude|anthropic|copilot|cursor)|Generated with \[?Claude'; then
+  echo "Commit bloqueado: commits levam só o nome da pessoa, sem coautoria nem marca de ferramenta." >&2
+  exit 1
+fi
+
+if [[ "$subject" =~ $exempt_re ]]; then
+  if [[ "$subject" =~ ^Merge ]] && ! git rev-parse -q --verify MERGE_HEAD >/dev/null; then
+    echo "Commit bloqueado: assunto de merge sem um merge em andamento: '$subject'" >&2
+    exit 1
+  fi
+  exit 0
+fi
+
+if ! [[ "$subject" =~ $subject_re ]]; then
+  echo "Commit bloqueado: assunto fora do padrão Conventional Commits (resumo de até 72 caracteres): '$subject'" >&2
+  echo "Exemplo: feat(api): add order creation endpoint" >&2
+  exit 1
+fi
