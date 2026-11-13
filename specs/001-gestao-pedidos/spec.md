@@ -142,8 +142,8 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **FR-018**: A interface DEVE oferecer listagem de pedidos com filtros por cliente e período, paginação e estados de vazio, carregamento e erro.
 - **FR-019**: A interface DEVE oferecer criação de pedido por formulário com validação, exibição das mensagens de erro de negócio e atualização da listagem após o sucesso.
 - **FR-020**: O ambiente completo (banco com estrutura e dados de exemplo, serviço e interface) DEVE subir com um único comando, sem passos manuais.
-- **FR-022**: O sistema DEVE aceitar uma chave de idempotência opcional na criação do pedido: a mesma chave com o mesmo conteúdo devolve o pedido original sem novo efeito; a mesma chave com conteúdo diferente é recusada. A interface DEVE enviar uma chave nova a cada tentativa de envio do formulário.
 - **FR-021**: O sistema DEVE manter a integridade dos dados no próprio armazenamento: identificadores únicos, e-mail de cliente único, código de produto único, um produto no máximo uma vez por pedido, preço e estoque não negativos e quantidade positiva.
+- **FR-022**: O sistema DEVE aceitar uma chave de idempotência opcional na criação do pedido: a mesma chave com o mesmo conteúdo devolve o pedido original sem novo efeito; a mesma chave com conteúdo diferente é recusada. A interface DEVE enviar uma chave nova a cada tentativa de envio do formulário.
 
 ### Entidades-chave
 

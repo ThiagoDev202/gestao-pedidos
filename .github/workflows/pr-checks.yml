@@ -21,8 +21,11 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       e2e: ${{ steps.filter.outputs.e2e }}
       docker: ${{ steps.filter.outputs.docker }}
+      has_frontend: ${{ steps.exists.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
+      - id: exists
+        run: if [ -f frontend/package.json ]; then echo frontend=true >> "$GITHUB_OUTPUT"; else echo frontend=false >> "$GITHUB_OUTPUT"; fi
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -56,8 +59,10 @@ jobs:
         run: dotnet format --verify-no-changes --no-restore
       - name: Build
         run: dotnet build --no-restore -c Release -warnaserror
-      - name: Unit and architecture tests
-        run: dotnet test tests/GestaoPedidos.UnitTests tests/GestaoPedidos.ArchitectureTests --no-build -c Release
+      - name: Unit tests
+        run: dotnet test tests/GestaoPedidos.UnitTests --no-build -c Release
+      - name: Architecture tests
+        run: dotnet test tests/GestaoPedidos.ArchitectureTests --no-build -c Release
       - name: Integration tests (SQL Server via Testcontainers)
         run: dotnet test tests/GestaoPedidos.IntegrationTests --no-build -c Release
 
@@ -80,11 +85,13 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test -- --run
+      - name: Unit tests in a time zone ahead of UTC
+        run: TZ=Pacific/Kiritimati npm test -- --run
       - run: npm run build
 
   e2e:
     needs: changes
-    if: needs.changes.outputs.e2e == 'true'
+    if: needs.changes.outputs.e2e == 'true' && needs.changes.outputs.has_frontend == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:

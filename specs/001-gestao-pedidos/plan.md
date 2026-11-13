@@ -18,7 +18,7 @@ Criar e consultar pedidos de clientes com estoque consistente. Abordagem: API .N
 **Tipo de projeto**: aplicação web (backend + frontend + banco)
 **Metas de desempenho**: primeira página da listagem e relatório de top clientes < 1 s com ~50 mil pedidos (SC-004); 50 pedidos concorrentes pelo último item → exatamente 1 aceito (SC-003)
 **Restrições**: baixa de estoque atômica; transação tudo-ou-nada; rate limiting no `POST /pedidos`; sem circuit breaker (ADR-007); sem bibliotecas de licença comercial
-**Escala/Escopo**: ~200 clientes, ~100 produtos, ~50 mil pedidos no seed; 6 endpoints; 2 telas (listagem com modal de criação e relatório)
+**Escala/Escopo**: ~200 clientes, ~100 produtos, ~50 mil pedidos no seed; 6 endpoints; 1 tela (listagem com diálogo de criação). O relatório de top clientes fica só na API (Princípio VII: a spec não pede tela)
 **Código existente**: nenhum (projeto greenfield); `impact-analyzer` não tem o que mapear
 
 ## Constitution Check
@@ -87,7 +87,7 @@ backend/
 frontend/
 ├── Dockerfile  nginx.conf  package.json  vite.config.ts  playwright.config.ts
 ├── src/
-│   ├── app/  features/pedidos/{api,components,hooks,schemas,pages}  features/relatorios/
+│   ├── app/  features/pedidos/{api,components,hooks,schemas,pages}
 │   └── shared/{api (http-client, ApiError, error-messages),components/ui (ErrorAlert, FieldError),lib}
 └── e2e/
 
@@ -114,7 +114,7 @@ docker-compose.yml
 |---|---|---|
 | 1 (atual) | `docs/001-sdd-gestao-pedidos` | spec, clarify, plano, contrato, tarefas, `docs/spec.md`, `docs/plan.md` |
 | 2 | `feat/001-backend-pedidos` | banco + compose (sqlserver, db-init, api), solução .NET, POST/GET pedidos, relatório, apoio, resiliência, testes unit/arquitetura/integração, job `backend` no CI |
-| 3 | `feat/002-frontend-pedidos` | frontend completo, nginx, serviço `web` no compose, Vitest, Playwright, jobs `frontend` e `e2e` |
+| 3 | `feat/002-frontend-pedidos` | frontend (listagem, diálogo de criação, camada de erros), nginx, serviço `web` no compose, Vitest, Playwright, jobs `frontend` e `e2e` |
 | 4 | `perf/003-query-ranking-e-entrega` | Parte 4 (investigação com `sql-tuner`, índices), CD (GHCR), README final, roteiro do vídeo |
 
 ## Acompanhamento de Complexidade

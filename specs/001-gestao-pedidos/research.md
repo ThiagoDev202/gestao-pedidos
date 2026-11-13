@@ -34,6 +34,8 @@ Sem `NEEDS CLARIFICATION` pendente: as duas decisões de escopo (produto repetid
 - **Razão**: única dependência é o banco; circuito aberto só trocaria um erro por outro (ADR-007). Polly limita chamadas de saída, não entrada, por isso o rate limiter nativo.
 - **Alternativas**: circuit breaker (sem ganho com dependência única); rate limiting via Polly (modelo errado).
 
+- **IP do cliente atrás do nginx**: a API usa `UseForwardedHeaders` com proxies confiáveis configuráveis; sem isso o limite por IP trataria todos os clientes como o container do nginx (ADR-010, criado no PR 2). Cabeçalho vindo de origem não confiável é ignorado.
+
 ## 6. Fuso e datas
 - **Decisão**: `DataPedido` em UTC (`datetime2`) via `IClock`; filtros por data (`yyyy-MM-dd`) viram `[inicio 00:00 UTC, fim + 1 dia)`; o frontend exibe no fuso local.
 - **Razão**: evita ambiguidade e permite `WHERE DataPedido >= @i AND DataPedido < @f` sargável.
