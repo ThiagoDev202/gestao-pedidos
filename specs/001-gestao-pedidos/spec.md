@@ -135,8 +135,6 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **FR-013**: O relatório DEVE exigir o período e recusar período ausente ou invertido.
 - **FR-014**: O sistema DEVE oferecer consulta de clientes, de produtos (com preço e estoque) e do detalhe de um pedido.
 - **FR-015**: Todas as respostas de erro DEVEM seguir o mesmo formato padronizado, com um código estável e específico para cada situação (nunca uma mensagem genérica quando existe causa conhecida), distinguindo validação, regra de negócio, recurso não encontrado, limite de taxa e falha interna.
-- **FR-023**: Erros de validação DEVEM listar todos os problemas de uma vez, cada um indicando o campo afetado.
-- **FR-024**: A interface DEVE mostrar, para cada código de erro, uma mensagem específica em português que diga o que aconteceu e o que o usuário pode fazer (por exemplo, produto e quantidade disponível no erro de estoque), colocar erros de campo junto do campo, e, em falhas inesperadas, exibir um código de suporte.
 - **FR-016**: O sistema DEVE limitar a taxa de criação de pedidos por origem de rede, recusando o excedente com indicação de quando tentar novamente.
 - **FR-017**: O sistema DEVE recuperar-se automaticamente de falhas transitórias do armazenamento sem duplicar pedidos nem baixar o estoque duas vezes.
 - **FR-018**: A interface DEVE oferecer listagem de pedidos com filtros por cliente e período, paginação e estados de vazio, carregamento e erro.
@@ -144,6 +142,8 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **FR-020**: O ambiente completo (banco com estrutura e dados de exemplo, serviço e interface) DEVE subir com um único comando, sem passos manuais.
 - **FR-021**: O sistema DEVE manter a integridade dos dados no próprio armazenamento: identificadores únicos, e-mail de cliente único, código de produto único, um produto no máximo uma vez por pedido, preço e estoque não negativos e quantidade positiva.
 - **FR-022**: O sistema DEVE aceitar uma chave de idempotência opcional na criação do pedido: a mesma chave com o mesmo conteúdo devolve o pedido original sem novo efeito; a mesma chave com conteúdo diferente é recusada. A interface DEVE enviar uma chave nova a cada tentativa de envio do formulário.
+- **FR-023**: Erros de validação DEVEM listar todos os problemas de uma vez, cada um indicando o campo afetado.
+- **FR-024**: A interface DEVE mostrar, para cada código de erro, uma mensagem específica em português que diga o que aconteceu e o que o usuário pode fazer (por exemplo, produto e quantidade disponível no erro de estoque), colocar erros de campo junto do campo, e, em falhas inesperadas, exibir um código de suporte.
 
 ### Entidades-chave
 
