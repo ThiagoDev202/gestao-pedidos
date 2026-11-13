@@ -16,7 +16,7 @@ Os docs **não** são carregados automaticamente: leia só o que a tarefa toca e
 | Débitos, riscos e divergências conhecidas | `docs/known-issues.md` |
 | O que falta fazer | `docs/backlog.md` |
 | Decisões de arquitetura (ADRs) | `docs/decisions/README.md` |
-| Políticas: código · segurança · banco · front · testes · git | `docs/policies/*.md` |
+| Políticas: código · segurança · banco · front · testes · erros · git | `docs/policies/*.md` (erros: `docs/policies/errors.md`) |
 | Clean Architecture / SOLID / GoF e onde aparecem | `docs/patterns/` |
 | Investigação de query (Parte 4) | `docs/playbooks/query-debug.md` |
 | Fluxo de entrega | `.claude/skills/ship/SKILL.md` |

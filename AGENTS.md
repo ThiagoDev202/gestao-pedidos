@@ -19,7 +19,7 @@ Domínio e regras de negócio: `docs/domain.md`. Débitos e riscos conhecidos: `
 ## Governança (Spec-Driven Development)
 
 - **Constitution**: `.specify/memory/constitution.md` (7 princípios e gates). Specs, planos, tarefas e docs em **pt-BR**; identificadores do domínio em pt-BR, termos técnicos e commits em **inglês**.
-- **Políticas** (leia antes de implementar): `docs/policies/coding.md`, `security.md`, `database.md`, `frontend.md`, `testing.md`, `git.md`.
+- **Políticas** (leia antes de implementar): `docs/policies/coding.md`, `security.md`, `database.md`, `frontend.md`, `testing.md`, `errors.md`, `git.md`.
 - **Fluxo** para features, mudança de contrato da API e de schema: `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` → `/speckit-analyze` → `/speckit-implement`. Pare para aprovação humana após a spec, após plano + tarefas e antes de commit/push. Correção que não muda contrato nem schema segue a trilha leve (uma frase de comportamento esperado e causa raiz com `arquivo:linha` no PR).
 - **Agentes** (`.claude/agents/`), acionados automaticamente: `qa-guardian` (o único que escreve, altera e aprova testes, a partir dos requisitos e antes do código; veredito APROVADO/REPROVADO), `code-reviewer` (diff de toda branch), `ux-guardian` (toda mudança de UI), `impact-analyzer` (raio de impacto de API/schema), `architect` (planos arriscados), `bug-investigator` (causa raiz antes de qualquer correção), `sql-tuner` (investigação de query com plano de execução, via MCP).
 - **Skills**: `/discover` (ideia → brief), `/ship` (entrega), `/retro` (fecha cada tarefa: docs e memória), `/onboard` (primeiro dia), `/docs-sweep` (docs × código), `/new-endpoint` (endpoint novo no padrão), `/new-screen` (tela nova no front), `/sql-investigate` (query lenta ou incorreta).
@@ -56,12 +56,13 @@ npx --prefix frontend playwright test      # e2e contra a stack do compose
 - Endpoints em `Api/Endpoints/<Recurso>Endpoints.cs` com `MapGroup`, `TypedResults`, sem regra de negócio.
 - Escrita: agregado + EF Core + `IUnitOfWork`. Leitura: Dapper com SQL parametrizado e sargável, devolvendo DTOs. Nunca expor entidade de domínio na API.
 - Estoque: baixa atômica no banco (`UPDATE ... WHERE Estoque >= @quantidade`), nunca leitura-modifica-grava.
-- Erros: exceção de domínio → ProblemDetails 422; validação estrutural → 400.
+- Erros: padrão único em `docs/policies/errors.md` (ProblemDetails com `code` estável, `traceId`, `meta` e `errors[]`); exceção de domínio tipada → 422, validação → 400 com todos os problemas; catálogo único em `Api/Errors/ErrorCatalog.cs`, sem montar ProblemDetails à mão.
 - Nomes: domínio em pt-BR (`Pedido`, `CriarPedidoCommand`), sufixos técnicos em inglês (`PedidoRepository`, `CriarPedidoHandler`).
 
 ### Frontend (`frontend/`)
 - `src/features/<feature>/{api,components,hooks,schemas,pages}`; `src/shared/{api,components/ui,lib}`; `src/app` (providers, router).
 - HTTP só em `api/`; estado de servidor com TanStack Query; formulários com react-hook-form + zod; componentes shadcn/ui em `shared/components/ui`.
+- Erros: tudo passa por `ApiError` (`shared/api/http-client.ts`) e pelo dicionário `code → mensagem pt-BR` (`shared/api/error-messages.ts`); erro de campo no campo, erro de regra no alerta do formulário, 500 com `traceId`; sem mensagem escrita à mão na tela.
 - Estilo só por classes Tailwind e tokens (CSS vars); sem cor ou tamanho fixos. Estados vazio, carregando, erro e sucesso em toda tela. Botão desabilitado durante envio. Textos em pt-BR.
 
 ### Banco (`database/`)

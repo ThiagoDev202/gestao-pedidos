@@ -10,5 +10,6 @@
 | [ADR-006](ADR-006-dotnet-10-e-minimal-apis.md) | .NET 10 LTS e Minimal APIs |
 | [ADR-007](ADR-007-resiliencia.md) | Retry e rate limiting, sem circuit breaker |
 | [ADR-008](ADR-008-cqrs-leve.md) | CQRS leve, sem MediatR |
+| [ADR-009](ADR-009-padrao-de-erros.md) | Padrão único de erros: ProblemDetails com códigos estáveis |
 
 Formato: contexto, decisão, alternativas, consequências. Criada por `/retro` quando uma entrega toma decisão de arquitetura.
