@@ -60,6 +60,11 @@ public static class PedidosEndpoints
             }
         }
 
+        if (requisicao.Itens is { } itensRecebidos && itensRecebidos.Any(i => i is null))
+        {
+            throw new BadHttpRequestException("Item nulo no corpo da requisição.");
+        }
+
         var comando = new CriarPedidoCommand(
             requisicao.ClienteId,
             (requisicao.Itens ?? []).Select(i => new ItemDoPedidoCommand(i.ProdutoId, i.Quantidade)).ToList(),
