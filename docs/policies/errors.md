@@ -46,7 +46,7 @@ Erro de validação com vários problemas devolve todos juntos: o usuário corri
 | 500 | falha inesperada | `erro_interno` (detalhe genérico; causa só no log, ligada ao `traceId`) |
 | 503 | banco indisponível após os retries | `banco_indisponivel` |
 
-`meta` por código: `cliente_inexistente` → `clienteId`; `produto_inexistente` → `produtoId`; `estoque_insuficiente` → `produtoId`, `produtoNome`, `solicitado`, `disponivel` (o primeiro item sem estoque, em ordem de `ProdutoId`); `pedido_nao_encontrado` → `pedidoId`; `itens_excedem_limite` → `maximo`; `limite_requisicoes_excedido` → `retryAfterSegundos`.
+`meta` por código: `cliente_inexistente` → `clienteId`; `produto_inexistente` → `produtoId`; `estoque_insuficiente` → `produtoId`, `produtoNome`, `solicitado`, `disponivel` (o primeiro item sem estoque, em ordem de `ProdutoId`); `pedido_nao_encontrado` → `pedidoId`; `limite_requisicoes_excedido` → `retryAfterSegundos`.
 
 ## Regras para o backend
 - Um catálogo único (`backend/src/GestaoPedidos.Api/Errors/ErrorCatalog.cs`) mapeia exceção de domínio ou falha de validação → `status`, `title`, `code`, `detail`, `meta`. Endpoint e handler **não** montam ProblemDetails à mão.
