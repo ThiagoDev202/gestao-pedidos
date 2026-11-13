@@ -72,6 +72,7 @@ npx --prefix frontend playwright test      # e2e contra a stack do compose
 - Pedido só é criado para cliente existente, com ≥ 1 item, cada quantidade > 0 e estoque suficiente para todos os itens; tudo ou nada (transação).
 - O preço do item vem de `Produtos.Preco` no momento da criação (o cliente da API não envia preço) e fica congelado em `ItensPedido.PrecoUnitario`.
 - Criar o pedido baixa o estoque; dois pedidos concorrentes pelo último item: só um passa.
+- Reenvio com a mesma `Idempotency-Key` e o mesmo corpo devolve o pedido original; corpo diferente é recusado (422).
 - Datas em UTC; filtros de período são datas inclusivas, convertidas para intervalo semiaberto `[inicio, fim + 1 dia)`.
 
 ## Ambiente e segredos

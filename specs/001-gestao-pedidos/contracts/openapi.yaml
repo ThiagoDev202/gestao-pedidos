@@ -1,0 +1,356 @@
+openapi: 3.1.0
+info:
+  title: Gestão de Pedidos API
+  version: 1.0.0
+  description: Criação e consulta de pedidos de clientes. Erros seguem ProblemDetails (RFC 9457).
+servers:
+  - url: http://localhost:5080
+paths:
+  /pedidos:
+    post:
+      operationId: criarPedido
+      summary: Cria um pedido com itens
+      description: Tudo ou nada. Preço vem do cadastro do produto. Limite de 50 itens, sem produto repetido.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarPedidoRequest'
+      responses:
+        '201':
+          description: Pedido criado
+          headers:
+            Location:
+              schema:
+                type: string
+              description: /pedidos/{id}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidoDetalhe'
+        '400':
+          $ref: '#/components/responses/Validacao'
+        '422':
+          $ref: '#/components/responses/RegraDeNegocio'
+        '429':
+          $ref: '#/components/responses/ExcessoDeRequisicoes'
+    get:
+      operationId: listarPedidos
+      summary: Lista pedidos com filtros e paginação
+      description: Ordenados por DataPedido decrescente. Período inclusivo nas duas pontas.
+      parameters:
+        - name: clienteId
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: dataInicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dataFim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Página de pedidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidosPaginados'
+        '400':
+          $ref: '#/components/responses/Validacao'
+  /pedidos/{id}:
+    get:
+      operationId: obterPedido
+      summary: Detalhe de um pedido
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Pedido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidoDetalhe'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+  /relatorios/top-clientes:
+    get:
+      operationId: topClientes
+      summary: 5 clientes com maior valor total de pedidos no período
+      description: Agrupa por cliente (não por nome). Desempate por nome. Clientes sem pedido no período não aparecem.
+      parameters:
+        - name: dataInicio
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: dataFim
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Até 5 clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 5
+                items:
+                  $ref: '#/components/schemas/TopCliente'
+        '400':
+          $ref: '#/components/responses/Validacao'
+  /clientes:
+    get:
+      operationId: listarClientes
+      summary: Lista clientes em ordem alfabética
+      responses:
+        '200':
+          description: Clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+  /produtos:
+    get:
+      operationId: listarProdutos
+      summary: Lista produtos com preço e estoque
+      responses:
+        '200':
+          description: Produtos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Produto'
+  /health:
+    get:
+      operationId: health
+      summary: Verifica a API e a conexão com o banco
+      responses:
+        '200':
+          description: Saudável
+        '503':
+          description: Banco indisponível
+components:
+  schemas:
+    CriarPedidoRequest:
+      type: object
+      required: [clienteId, itens]
+      additionalProperties: false
+      properties:
+        clienteId:
+          type: integer
+          minimum: 1
+        itens:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/ItemRequest'
+    ItemRequest:
+      type: object
+      required: [produtoId, quantidade]
+      additionalProperties: false
+      properties:
+        produtoId:
+          type: integer
+          minimum: 1
+        quantidade:
+          type: integer
+          minimum: 1
+    PedidoDetalhe:
+      type: object
+      required: [id, clienteId, clienteNome, dataPedido, valorTotal, itens]
+      properties:
+        id:
+          type: integer
+        clienteId:
+          type: integer
+        clienteNome:
+          type: string
+        dataPedido:
+          type: string
+          format: date-time
+          description: UTC
+        valorTotal:
+          type: number
+          format: decimal
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemPedido'
+    ItemPedido:
+      type: object
+      required: [produtoId, produtoNome, sku, quantidade, precoUnitario, subtotal]
+      properties:
+        produtoId:
+          type: integer
+        produtoNome:
+          type: string
+        sku:
+          type: string
+        quantidade:
+          type: integer
+        precoUnitario:
+          type: number
+          format: decimal
+        subtotal:
+          type: number
+          format: decimal
+    PedidoResumo:
+      type: object
+      required: [id, clienteId, clienteNome, dataPedido, valorTotal, quantidadeItens]
+      properties:
+        id:
+          type: integer
+        clienteId:
+          type: integer
+        clienteNome:
+          type: string
+        dataPedido:
+          type: string
+          format: date-time
+        valorTotal:
+          type: number
+          format: decimal
+        quantidadeItens:
+          type: integer
+    PedidosPaginados:
+      type: object
+      required: [items, page, pageSize, totalItems, totalPages]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PedidoResumo'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalItems:
+          type: integer
+        totalPages:
+          type: integer
+    TopCliente:
+      type: object
+      required: [clienteId, nome, valorTotal, quantidadePedidos]
+      properties:
+        clienteId:
+          type: integer
+        nome:
+          type: string
+        valorTotal:
+          type: number
+          format: decimal
+        quantidadePedidos:
+          type: integer
+    Cliente:
+      type: object
+      required: [id, nome, email]
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+    Produto:
+      type: object
+      required: [id, nome, sku, preco, estoque]
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        sku:
+          type: string
+        preco:
+          type: number
+          format: decimal
+        estoque:
+          type: integer
+    Problema:
+      type: object
+      description: ProblemDetails (RFC 9457)
+      required: [status, title]
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          description: Presente nos erros 422
+          enum: [cliente_inexistente, produto_inexistente, estoque_insuficiente]
+        errors:
+          type: object
+          description: Presente nos erros 400; campo para lista de mensagens
+          additionalProperties:
+            type: array
+            items:
+              type: string
+  responses:
+    Validacao:
+      description: Dados malformados ou fora dos limites
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+    RegraDeNegocio:
+      description: Dados válidos que violam uma regra (cliente ou produto inexistente, estoque insuficiente)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+    NaoEncontrado:
+      description: Recurso não encontrado
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+    ExcessoDeRequisicoes:
+      description: Limite de taxa excedido
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Segundos até tentar de novo
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'

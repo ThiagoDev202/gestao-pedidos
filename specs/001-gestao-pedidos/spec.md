@@ -25,6 +25,9 @@ O Operador registra um pedido para um cliente existente, informando os produtos 
 6. **Dado** um pedido em que ao menos um item pede mais do que o estoque disponível, **Quando** o Operador tenta criá-lo, **Então** o pedido é recusado com erro de regra de negócio que identifica o produto e o estoque disponível, e **nenhum** produto do pedido tem o estoque alterado.
 7. **Dado** um produto com apenas 1 unidade em estoque, **Quando** dois pedidos simultâneos pedem essa unidade, **Então** exatamente um é aceito, o outro é recusado por estoque insuficiente, e o estoque final é 0 (nunca negativo).
 8. **Dado** um produto cujo preço é alterado depois de um pedido, **Quando** o pedido antigo é consultado, **Então** o preço do item e o total permanecem os da data da criação.
+9. **Dado** um pedido enviado com uma chave de idempotência, **Quando** a mesma requisição é reenviada com a mesma chave (duplo clique, nova tentativa após falha de rede), **Então** nenhum pedido novo é criado, o estoque não é baixado de novo e o sistema devolve o pedido já criado.
+10. **Dado** uma chave de idempotência já usada, **Quando** ela chega com itens ou cliente diferentes, **Então** o pedido é recusado com erro de regra de negócio que indica o reúso indevido da chave.
+11. **Dado** dois pedidos idênticos enviados com chaves diferentes (ou sem chave), **Quando** ambos são válidos, **Então** os dois são criados, pois comprar o mesmo conteúdo duas vezes é permitido.
 
 ---
 
@@ -108,6 +111,7 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - O mesmo produto aparecendo em mais de uma linha do pedido: o pedido é recusado com erro de validação que identifica o produto repetido (decisão de 2026-11-13).
 - Pedido com mais de 50 itens: recusado com erro de validação (decisão de 2026-11-13).
 - Falha temporária no armazenamento no meio da criação do pedido: nada fica gravado pela metade (tudo ou nada).
+- Duas requisições simultâneas com a mesma chave de idempotência: exatamente um pedido é criado e as duas respostas apontam para ele.
 - Excesso de criações de pedido em pouco tempo pelo mesmo cliente de rede: o sistema recusa o excedente indicando quando tentar de novo.
 - Filtros com a mesma data inicial e final: retornam os pedidos daquele dia inteiro.
 - Datas de pedido e de filtro tratadas de forma consistente entre fusos: o registro é em UTC e a tela exibe no fuso local.
@@ -136,6 +140,7 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **FR-018**: A interface DEVE oferecer listagem de pedidos com filtros por cliente e período, paginação e estados de vazio, carregamento e erro.
 - **FR-019**: A interface DEVE oferecer criação de pedido por formulário com validação, exibição das mensagens de erro de negócio e atualização da listagem após o sucesso.
 - **FR-020**: O ambiente completo (banco com estrutura e dados de exemplo, serviço e interface) DEVE subir com um único comando, sem passos manuais.
+- **FR-022**: O sistema DEVE aceitar uma chave de idempotência opcional na criação do pedido: a mesma chave com o mesmo conteúdo devolve o pedido original sem novo efeito; a mesma chave com conteúdo diferente é recusada. A interface DEVE enviar uma chave nova a cada tentativa de envio do formulário.
 - **FR-021**: O sistema DEVE manter a integridade dos dados no próprio armazenamento: identificadores únicos, e-mail de cliente único, código de produto único, um produto no máximo uma vez por pedido, preço e estoque não negativos e quantidade positiva.
 
 ### Entidades-chave
@@ -143,6 +148,7 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **Cliente**: quem compra. Tem nome e e-mail único.
 - **Produto**: item vendável. Tem nome, código (SKU) único, preço atual e estoque.
 - **Pedido**: compra de um cliente. Tem cliente, data/hora de criação (UTC) e valor total.
+- **Registro de idempotência**: associa uma chave enviada pelo solicitante ao pedido criado e ao conteúdo original, para reconhecer reenvios.
 - **Item do pedido**: linha de um pedido. Tem produto, quantidade e preço unitário congelado; um produto aparece no máximo uma vez por pedido.
 
 ## Critérios de Sucesso *(obrigatório)*
@@ -152,6 +158,7 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **SC-001**: Um Operador cria um pedido de 3 itens pela interface em menos de 1 minuto, sem treinamento.
 - **SC-002**: 100% das tentativas de pedido inválido (cliente inexistente, sem itens, quantidade inválida, estoque insuficiente) são recusadas sem alterar nenhum estoque.
 - **SC-003**: Em teste com 50 pedidos simultâneos pelo último item de um produto, exatamente 1 é aceito e o estoque final é 0.
+- **SC-008**: Em teste com 10 envios simultâneos da mesma requisição com a mesma chave de idempotência, exatamente 1 pedido é criado e o estoque é baixado uma única vez.
 - **SC-004**: Com a carga de exemplo (dezenas de milhares de pedidos), a primeira página da listagem e o relatório de melhores clientes aparecem em menos de 1 segundo para o usuário.
 - **SC-005**: O ranking dos 5 melhores clientes coincide em 100% com o cálculo manual sobre os dados de exemplo, inclusive com clientes homônimos e empates.
 - **SC-006**: Um avaliador sobe o ambiente completo com um único comando e executa o fluxo de criar e consultar um pedido em menos de 5 minutos.
