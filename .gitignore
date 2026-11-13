@@ -1,0 +1,17 @@
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.local
+.env.*.local
+!.env.example
+*.log
+.DS_Store
+.claude/settings.local.json
