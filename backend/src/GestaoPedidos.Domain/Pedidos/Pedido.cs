@@ -30,7 +30,7 @@ public sealed class Pedido
         var invalido = itens.FirstOrDefault(item => item.Quantidade <= 0);
         if (invalido is not null)
         {
-            throw new PedidoInvalidoException($"A quantidade do produto {invalido.ProdutoId} deve ser maior que zero.");
+            throw new PedidoInvalidoException($"A quantidade do produto {invalido.ProdutoId} deve ser maior que zero.", "itens", "quantidade_invalida");
         }
 
         var pedido = new Pedido

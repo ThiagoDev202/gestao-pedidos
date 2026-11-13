@@ -37,7 +37,7 @@ public static class ErrorCatalog
             ("disponivel", e.Disponivel)),
         ChaveReutilizadaException e => Regra("chave_reutilizada", "Chave de idempotência reutilizada", e.Message, ("chave", e.Chave)),
         PedidoNaoEncontradoException e => Criar(404, "pedido_nao_encontrado", "Pedido não encontrado", e.Message, new Dictionary<string, object?> { ["pedidoId"] = e.PedidoId }, null),
-        PedidoInvalidoException e => Validacao([new ErroDeCampo("pedido", "pedido_invalido", e.Message)]),
+        PedidoInvalidoException e => Validacao([new ErroDeCampo(e.Campo, e.Codigo, e.Message)]),
         RequisicaoInvalidaException e => Validacao(e.Erros),
         BadHttpRequestException { StatusCode: StatusCodes.Status415UnsupportedMediaType } => FormatoNaoSuportado(),
         BadHttpRequestException => Validacao([new ErroDeCampo("$", "corpo_invalido", "O corpo da requisição não é um JSON válido ou contém campos não permitidos.")]),
