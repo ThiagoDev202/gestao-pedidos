@@ -2,7 +2,7 @@
 
 **Branch**: `docs/001-sdd-gestao-pedidos`
 **Criada em**: 2026-11-13
-**Status**: Rascunho
+**Status**: Aprovada para implementação
 **Entrada**: Aplicação de cadastro e consulta de pedidos de clientes, com criação validada de pedidos, listagem filtrada e paginada e relatório dos melhores clientes.
 
 ## Cenários de Usuário e Testes *(obrigatório)*
@@ -160,12 +160,12 @@ O Operador vê a lista de clientes e a lista de produtos (com preço e estoque) 
 - **SC-001**: Um Operador cria um pedido de 3 itens pela interface em menos de 1 minuto, sem treinamento.
 - **SC-002**: 100% das tentativas de pedido inválido (cliente inexistente, sem itens, quantidade inválida, estoque insuficiente) são recusadas sem alterar nenhum estoque.
 - **SC-003**: Em teste com 50 pedidos simultâneos pelo último item de um produto, exatamente 1 é aceito e o estoque final é 0.
-- **SC-009**: 100% dos códigos de erro do catálogo têm teste na API e mensagem específica na interface; nenhuma tela exibe texto técnico cru de erro.
-- **SC-008**: Em teste com 10 envios simultâneos da mesma requisição com a mesma chave de idempotência, exatamente 1 pedido é criado e o estoque é baixado uma única vez.
 - **SC-004**: Com a carga de exemplo (dezenas de milhares de pedidos), a primeira página da listagem e o relatório de melhores clientes aparecem em menos de 1 segundo para o usuário.
 - **SC-005**: O ranking dos 5 melhores clientes coincide em 100% com o cálculo manual sobre os dados de exemplo, inclusive com clientes homônimos e empates.
 - **SC-006**: Um avaliador sobe o ambiente completo com um único comando e executa o fluxo de criar e consultar um pedido em menos de 5 minutos.
 - **SC-007**: Toda regra de negócio acima tem ao menos um teste automatizado, e o fluxo "criar pedido e vê-lo na listagem" tem teste de ponta a ponta.
+- **SC-008**: Em teste com 10 envios simultâneos da mesma requisição com a mesma chave de idempotência, exatamente 1 pedido é criado e o estoque é baixado uma única vez.
+- **SC-009**: 100% dos códigos de erro do catálogo têm teste na API e mensagem específica na interface; nenhuma tela exibe texto técnico cru de erro.
 
 ## Premissas
 

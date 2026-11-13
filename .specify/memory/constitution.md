@@ -1,6 +1,8 @@
 <!--
 Sync Impact Report
-Versão: (modelo) → 1.0.0 (ratificação inicial)
+Versão: 1.0.0 → 1.0.1 (PATCH: problemas fora do escopo passam a virar issues do GitHub, em vez de docs/known-issues.md, removido)
+Templates sincronizados no 1.0.1: spec, plan e tasks em pt-BR com os gates do projeto
+Versão anterior: (modelo) → 1.0.0 (ratificação inicial)
 Princípios adicionados: I–VII; seções Idioma, Restrições técnicas, Fluxo e gates de qualidade, Governança
 Templates a sincronizar quando a primeira spec for criada: plan-template.md (Constitution Check), tasks-template.md (gates finais)
 Pendências: nenhuma
@@ -73,4 +75,4 @@ O fluxo de entrega está na skill `/ship`. A `main` é protegida e só recebe PR
 
 Esta constituição prevalece sobre preferências individuais e atalhos. Emendas via `/speckit-constitution`, com versão semântica: MAJOR remove ou redefine princípio; MINOR acrescenta princípio ou amplia de forma relevante; PATCH esclarece. O guia operacional do dia a dia é o `AGENTS.md`; as políticas detalhadas ficam em `docs/policies/`.
 
-**Versão**: 1.0.0 | **Ratificada**: 2026-11-13 | **Última alteração**: 2026-11-13
+**Versão**: 1.0.1 | **Ratificada**: 2026-11-13 | **Última alteração**: 2026-11-13

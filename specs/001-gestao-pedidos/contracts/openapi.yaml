@@ -28,6 +28,10 @@ paths:
       responses:
         '200':
           description: Reenvio idempotente; devolve o pedido criado antes
+          headers:
+            Location:
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -47,8 +51,14 @@ paths:
           $ref: '#/components/responses/Validacao'
         '422':
           $ref: '#/components/responses/RegraDeNegocio'
+        '415':
+          $ref: '#/components/responses/FormatoNaoSuportado'
         '429':
           $ref: '#/components/responses/ExcessoDeRequisicoes'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+        '503':
+          $ref: '#/components/responses/BancoIndisponivel'
     get:
       operationId: listarPedidos
       summary: Lista pedidos com filtros e paginação
@@ -91,6 +101,12 @@ paths:
                 $ref: '#/components/schemas/PedidosPaginados'
         '400':
           $ref: '#/components/responses/Validacao'
+        '429':
+          $ref: '#/components/responses/ExcessoDeRequisicoes'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+        '503':
+          $ref: '#/components/responses/BancoIndisponivel'
   /pedidos/{id}:
     get:
       operationId: obterPedido
@@ -111,6 +127,12 @@ paths:
                 $ref: '#/components/schemas/PedidoDetalhe'
         '404':
           $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/ExcessoDeRequisicoes'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+        '503':
+          $ref: '#/components/responses/BancoIndisponivel'
   /relatorios/top-clientes:
     get:
       operationId: topClientes
@@ -141,6 +163,12 @@ paths:
                   $ref: '#/components/schemas/TopCliente'
         '400':
           $ref: '#/components/responses/Validacao'
+        '429':
+          $ref: '#/components/responses/ExcessoDeRequisicoes'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+        '503':
+          $ref: '#/components/responses/BancoIndisponivel'
   /clientes:
     get:
       operationId: listarClientes
@@ -154,6 +182,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Cliente'
+        '429':
+          $ref: '#/components/responses/ExcessoDeRequisicoes'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+        '503':
+          $ref: '#/components/responses/BancoIndisponivel'
   /produtos:
     get:
       operationId: listarProdutos
@@ -167,6 +201,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Produto'
+        '429':
+          $ref: '#/components/responses/ExcessoDeRequisicoes'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+        '503':
+          $ref: '#/components/responses/BancoIndisponivel'
   /health:
     get:
       operationId: health
@@ -386,13 +426,31 @@ components:
           schema:
             $ref: '#/components/schemas/Problema'
     RegraDeNegocio:
-      description: Dados válidos que violam uma regra (cliente ou produto inexistente, estoque insuficiente)
+      description: Dados válidos que violam uma regra (cliente ou produto inexistente, estoque insuficiente, chave de idempotência reutilizada)
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problema'
     NaoEncontrado:
       description: Recurso não encontrado
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+    ErroInterno:
+      description: Falha inesperada (erro_interno); detalhe genérico, causa só no log ligada ao traceId
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+    BancoIndisponivel:
+      description: Banco indisponível após os retries (banco_indisponivel)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+    FormatoNaoSuportado:
+      description: Corpo que não é JSON (formato_nao_suportado)
       content:
         application/problem+json:
           schema:

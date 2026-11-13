@@ -30,6 +30,8 @@ Todo erro da API tem o **mesmo formato** (ProblemDetails, RFC 9457) e um **códi
 | `meta` | dados estruturados da ocorrência (ids, quantidades) para a interface montar a mensagem; opcional |
 | `errors` | só no 400: lista de `{ campo, code, mensagem }`, **uma entrada por problema** (todos de uma vez, não só o primeiro) |
 
+`corpo_invalido` (JSON malformado ou campo desconhecido) segue a mesma forma: raiz `validacao_falhou` com um item em `errors` de `code: corpo_invalido` e `campo: "$"`. O `campo` é o caminho em notação de ponto com índice entre colchetes na API (`itens[0].quantidade`); o frontend converte para o caminho do react-hook-form (`itens.0.quantidade`) em `shared/api`.
+
 Erro de validação com vários problemas devolve todos juntos: o usuário corrige tudo numa tentativa.
 
 ## Categorias e catálogo

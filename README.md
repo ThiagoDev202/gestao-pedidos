@@ -41,10 +41,10 @@ Documentos centrais: [`AGENTS.md`](AGENTS.md) (fonte única das regras), [`CLAUD
 - **Auxiliares**: `scripts/check-pr.sh` (governança do PR), `scripts/check-docs-drift.sh` (docs × código), `scripts/next-branch-number.sh` e `scripts/merge-when-green.sh`.
 
 ### MCP do SQL Server
-`.mcp.json` conecta o Claude ao SQL Server local pelo DBHub em modo **somente leitura** (`READONLY=true`), com o DSN em `MSSQL_MCP_DSN`. O uso durante o desenvolvimento será detalhado no README final.
+`.mcp.json` conecta o Claude ao SQL Server local pelo DBHub em modo **somente leitura** (`READONLY=true`), com o DSN em `MSSQL_MCP_DSN`, definido no `.env` (fora do git) e exportado antes de abrir o Claude Code (`set -a; . ./.env; set +a`). O uso durante o desenvolvimento será detalhado no README final.
 
 ### CI
-`.github/workflows/pr-checks.yml` (check `ci-ok`: backend, frontend, e2e, docker e docs-drift conforme os caminhos alterados) e `pr-governance.yml` (check `governance`, com os scripts da `main`). Merge só por merge commit, preservando o histórico.
+`.github/workflows/pr-checks.yml` (check `ci-ok`: backend, frontend, e2e, docker e docs-drift conforme os caminhos alterados; o e2e só roda quando existe `frontend/package.json` e o frontend também roda com `TZ=Pacific/Kiritimati`) e `pr-governance.yml` (check `governance`, com os scripts da `main`). Merge só por merge commit, preservando o histórico.
 
 ## Fluxo de trabalho
 

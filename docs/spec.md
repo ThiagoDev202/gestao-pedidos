@@ -23,14 +23,14 @@ Permitir que um **Operador** cadastre pedidos de clientes (com itens e controle 
 
 | Método e rota | Resposta de sucesso | Erros |
 |---|---|---|
-| `POST /pedidos` (`Idempotency-Key` opcional) | 201 + `Location` (200 no reenvio idempotente) | 400, 422, 429 |
+| `POST /pedidos` (`Idempotency-Key` opcional) | 201 + `Location` (200 no reenvio idempotente) | 400, 415, 422, 429, 500, 503 |
 | `GET /pedidos?clienteId&dataInicio&dataFim&page&pageSize` | 200 `{ items, page, pageSize, totalItems, totalPages }` | 400 |
 | `GET /pedidos/{id}` | 200 detalhe com itens | 404 |
 | `GET /relatorios/top-clientes?dataInicio&dataFim` | 200 até 5 `{ clienteId, nome, valorTotal, quantidadePedidos }` | 400 |
 | `GET /clientes` · `GET /produtos` | 200 listas (produtos com preço e estoque) | — |
 | `GET /health` | 200 (503 se o banco cair) | — |
 
-Todo erro é ProblemDetails com `code` específico, `traceId`, `meta` e `errors[]` (ver [`policies/errors.md`](policies/errors.md)). Documentação interativa em `/scalar`.
+Qualquer rota pode ainda devolver 429, 500 e 503. Todo erro é ProblemDetails com `code` específico, `traceId`, `meta` e `errors[]` (ver [`policies/errors.md`](policies/errors.md)). Documentação interativa em `/scalar`.
 
 ## 4. Modelo de dados (SQL Server)
 

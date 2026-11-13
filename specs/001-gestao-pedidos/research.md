@@ -24,7 +24,7 @@ Sem `NEEDS CLARIFICATION` pendente: as duas decisões de escopo (produto repetid
 - **Preço**: lido na mesma transação; edição de preço está fora de escopo, então não há corrida relevante.
 
 ## 4b. Idempotência do POST /pedidos
-- **Decisão**: header opcional `Idempotency-Key` (UUID). Tabela `IdempotenciaPedidos(Chave PK, HashCorpo, PedidoId, CriadoEm)` gravada na mesma transação do pedido; reenvio com o mesmo hash devolve o pedido original (200 + `Location`); hash diferente → 422 `chave_reutilizada`; corrida entre duas requisições com a mesma chave resolvida pela PK.
+- **Decisão**: header opcional `Idempotency-Key` (UUID). Tabela `IdempotenciaPedidos(Chave PK, HashCorpo, PedidoId, CriadoEm)` gravada na mesma transação do pedido, com `sp_getapplock` pela chave no início da transação para serializar reenvios simultâneos antes de tocar o estoque; reenvio com o mesmo hash devolve o pedido original (200 com o mesmo corpo); hash diferente → 422 `chave_reutilizada`; a PK da chave é a última defesa.
 - **Razão**: dois pedidos idênticos são legítimos, então a deduplicação não pode ser pelo conteúdo; o risco real é o mesmo envio repetido (duplo clique, retry após timeout, queda logo após o commit, onde o retry do EF não sabe se gravou). A chave torna o reenvio seguro.
 - **Alternativas**: só desabilitar o botão e limitar a taxa (não cobre retry de rede); deduplicar por conteúdo + janela de tempo (bloqueia compras repetidas legítimas); expirar chaves por job (fora de escopo; fica como próximo passo no README).
 - **Isolamento**: `READ COMMITTED` basta; a consistência vem do update atômico do estoque, da PK da chave e do `UNIQUE` dos itens.
@@ -42,7 +42,7 @@ Sem `NEEDS CLARIFICATION` pendente: as duas decisões de escopo (produto repetid
 - **Alternativas**: `datetimeoffset` (mais pesado sem necessidade); fuso do servidor (frágil).
 
 ## 7. Erros e códigos HTTP
-- **Decisão**: ProblemDetails (RFC 9457). 400 validação (com mapa `errors`), 422 regra de negócio (com `code`: `cliente_inexistente`, `produto_inexistente`, `estoque_insuficiente`), 404 pedido inexistente, 429 excesso de requisições, 201 + `Location`.
+- **Decisão**: ProblemDetails (RFC 9457). 400 validação (raiz `validacao_falhou` com `errors[]` de `{campo, code, mensagem}`), 422 regra de negócio (com `code`: `cliente_inexistente`, `produto_inexistente`, `estoque_insuficiente`, `chave_reutilizada`), 404 pedido inexistente, 429 excesso de requisições, 201 + `Location`.
 - **Razão**: separa "dados malformados" de "dados válidos que violam regra", como pede a spec (FR-015).
 
 - **Padrão completo** (campos, catálogo de códigos, `meta`, regras de backend e frontend): `docs/policies/errors.md` e ADR-009. Erros de validação listam todos os problemas; cada `code` é estável e tem mensagem específica na interface.

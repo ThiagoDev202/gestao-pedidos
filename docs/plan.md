@@ -30,7 +30,7 @@ O Claude, em plan mode, leu o enunciado e a governança do repositório de refer
 | 12 | Concorrência | não mencionada | baixa atômica (`UPDATE ... WHERE Estoque >= @q`) em ordem fixa de produtos, `CHECK (Estoque >= 0)`, teste com 50 pedidos simultâneos | evitar venda dupla e deadlock |
 | 13 | Idempotência | não mencionada | `Idempotency-Key` com tabela própria | dois pedidos idênticos são legítimos; o risco real é o mesmo envio repetido (duplo clique, retry de rede) |
 | 14 | Erros | "validação" genérica | padrão único ProblemDetails com `code` específico, `traceId`, `meta` e `errors[]`, e dicionário de mensagens no front | erros específicos e consistentes na API e na interface (ADR-009) |
-| 15 | Rate limit atrás do nginx | não considerado | `UseForwardedHeaders` com proxies confiáveis (ADR-010) | sem isso o limite por IP trataria todos como o container do nginx; apontado pelo `/speckit-analyze` |
+| 15 | Rate limit atrás do nginx | não considerado | `UseForwardedHeaders` com proxies confiáveis (ADR-010, a criar no PR 2) | sem isso o limite por IP trataria todos como o container do nginx; apontado pelo `/speckit-analyze` |
 | 16 | Tela de top clientes | incluída no plano inicial | **removida** | a spec não a pede (Princípio VII); o relatório fica na API |
 | 17 | Arquivos herdados | `known-issues.md` e `backlog.md` | removidos; pendências viram issues do GitHub | eram específicos do projeto de referência |
 | 18 | Spec Kit | instalação padrão | removidos o motor de `workflows/` e a skill `taskstoissues`; templates reescritos em pt-BR com os gates do projeto | só o que o fluxo usa; templates em inglês gerariam specs fora do idioma do projeto |
