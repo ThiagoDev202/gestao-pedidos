@@ -50,7 +50,8 @@ fi
 
 pr_type="${title%%[(:!]*}"
 declared_scopes=""
-if [[ "$title" =~ ^[a-z]+\(([^)]*)\) ]]; then declared_scopes="${BASH_REMATCH[1]}"; fi
+scope_extract_re='^[a-z]+\(([^)]*)\)'
+if [[ "$title" =~ $scope_extract_re ]]; then declared_scopes="${BASH_REMATCH[1]}"; fi
 
 files=$(git diff --name-only --diff-filter=ACMRD "$base"..."$head")
 
