@@ -75,8 +75,9 @@ public sealed class CriarPedidoHandler(
         {
             if (!await produtos.TentarBaixarEstoqueAsync(item.ProdutoId, item.Quantidade, ct))
             {
-                var produto = porId[item.ProdutoId];
-                throw new EstoqueInsuficienteException(produto.Id, produto.Nome, item.Quantidade, produto.Estoque);
+                var relidos = await produtos.ObterPorIdsAsync(new[] { item.ProdutoId }, ct);
+                var atual = relidos.Count > 0 ? relidos[0] : porId[item.ProdutoId];
+                throw new EstoqueInsuficienteException(atual.Id, atual.Nome, item.Quantidade, atual.Estoque);
             }
         }
 
