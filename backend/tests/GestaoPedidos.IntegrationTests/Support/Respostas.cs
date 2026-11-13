@@ -15,7 +15,7 @@ public static class Respostas
         resposta.StatusCode.ShouldBe(status, corpo);
         (resposta.Content.Headers.ContentType?.MediaType).ShouldBe(ProblemJson, corpo);
 
-        var raiz = JsonDocument.Parse(corpo).RootElement.Clone();
+        var raiz = JsonElement.Parse(corpo);
         raiz.GetProperty("status").GetInt32().ShouldBe((int)status);
         raiz.GetProperty("code").GetString().ShouldBe(code);
         raiz.GetProperty("type").GetString().ShouldBe("urn:gestaopedidos:erro:" + code);
@@ -38,7 +38,7 @@ public static class Respostas
     public static async Task<JsonElement> JsonAsync(this HttpResponseMessage resposta)
     {
         var corpo = await resposta.Content.ReadAsStringAsync();
-        return JsonDocument.Parse(corpo).RootElement.Clone();
+        return JsonElement.Parse(corpo);
     }
 
     public static Task<HttpResponseMessage> CriarPedidoAsync(

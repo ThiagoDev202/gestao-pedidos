@@ -94,7 +94,7 @@ public sealed class OpenApiContractTests(SqlServerFixture sql) : TesteDeIntegrac
         var resposta = await CriarCliente().GetAsync("/openapi/v1.json");
         var corpo = await resposta.Content.ReadAsStringAsync();
         resposta.IsSuccessStatusCode.ShouldBeTrue(corpo);
-        return JsonDocument.Parse(corpo).RootElement.Clone();
+        return JsonElement.Parse(corpo);
     }
 
     private static JsonElement OperacaoGerada(JsonElement documento, string caminho, string metodo)

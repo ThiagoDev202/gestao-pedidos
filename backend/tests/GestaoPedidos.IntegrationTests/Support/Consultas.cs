@@ -64,7 +64,7 @@ public static class Consultas
         var corpo = await resposta.Content.ReadAsStringAsync();
         resposta.StatusCode.ShouldBe(HttpStatusCode.OK, corpo);
         (resposta.Content.Headers.ContentType?.MediaType).ShouldBe("application/json", corpo);
-        return JsonDocument.Parse(corpo).RootElement.Clone();
+        return JsonElement.Parse(corpo);
     }
 
     public static DateTime DataUtc(this JsonElement elemento, string propriedade)
