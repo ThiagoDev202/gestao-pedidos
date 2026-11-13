@@ -14,7 +14,7 @@ Instruções compartilhadas por todo assistente de código que trabalha neste re
 | Frontend | React · TypeScript · Vite · Tailwind + shadcn/ui · TanStack Query | `frontend/` (porta 8080 no Docker, 5173 em dev) |
 | Banco | Scripts SQL idempotentes (criação, schema, seed) | `database/` |
 
-Domínio e regras de negócio: `docs/domain.md`. Débitos e riscos conhecidos: `docs/known-issues.md`.
+Domínio e regras de negócio: `docs/domain.md`. Débitos e riscos conhecidos: issues do GitHub.
 
 ## Governança (Spec-Driven Development)
 
@@ -79,7 +79,7 @@ npx --prefix frontend playwright test      # e2e contra a stack do compose
 ## Ambiente e segredos
 
 - Nunca commite `.env`, chaves ou senhas. Valores locais ficam em `.env` (cópia de `.env.example`).
-- O MCP do SQL Server (`.mcp.json`) é **somente leitura** e usa o DSN da variável `MSSQL_MCP_DSN`.
+- O MCP do SQL Server (`.mcp.json`) é **somente leitura** e lê o DSN da variável `MSSQL_MCP_DSN` (definida no `.env`, que não é versionado; `.mcp.json` nunca leva credenciais). Carregue antes de abrir o Claude Code: `set -a; . ./.env; set +a`.
 
 | Serviço local | URL |
 |---|---|

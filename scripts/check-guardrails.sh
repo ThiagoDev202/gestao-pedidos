@@ -33,6 +33,7 @@ content_of() {
   fi
 }
 
+url_cred_re='[a-z][a-z0-9+.-]*://[^/:@[:space:]"'"'"']+:[^@/[:space:]"'"'"']+@'
 strong_re='AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|xox[baprs]-[A-Za-z0-9-]{10,}'
 key_re='(secret|password|passwd|token|api[_-]?key|access[_-]?key)[A-Za-z0-9_]*["'"'"']?[[:space:]]*[:=][[:space:]]*'
 quoted_re="${key_re}[\"'][^\"'\$ {]{12,}[\"']"
@@ -52,6 +53,13 @@ while IFS= read -r -d '' f; do
   [ "$f" = "scripts/check-guardrails.sh" ] && continue
   added=$(content_of "$f" || true)
   [ -z "$added" ] && continue
+
+  case "$f" in
+    *.env.example|*.md) ;;
+    *) if hits=$(printf '%s\n' "$added" | grep -nE "$url_cred_re"); then
+         report "credencial embutida em URL/DSN em $f (use variável de ambiente):"; echo "$hits" | head -3
+       fi ;;
+  esac
 
   if hits=$(printf '%s\n' "$added" | grep -nE "$strong_re"); then
     report "possível segredo em $f:"; echo "$hits" | head -3
