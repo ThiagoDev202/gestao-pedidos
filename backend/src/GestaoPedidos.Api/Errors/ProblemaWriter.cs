@@ -9,6 +9,7 @@ public static class ProblemaWriter
     private static readonly JsonSerializerOptions Opcoes = new(JsonSerializerDefaults.Web)
     {
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
     public static async Task EscreverAsync(HttpContext contexto, ProblemaHttp problema)
