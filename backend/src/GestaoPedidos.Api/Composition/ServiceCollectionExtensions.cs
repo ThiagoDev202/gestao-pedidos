@@ -18,7 +18,11 @@ public static class ServiceCollectionExtensions
         services.AddInfrastructure(configuration);
         services.AddLoggingDecorators();
 
-        services.Configure<JsonOptions>(opcoes => opcoes.SerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow);
+        services.Configure<JsonOptions>(opcoes =>
+        {
+            opcoes.SerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
+            opcoes.SerializerOptions.RespectNullableAnnotations = true;
+        });
         services.Configure<RouteHandlerOptions>(opcoes => opcoes.ThrowOnBadRequest = true);
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -34,11 +38,6 @@ public static class ServiceCollectionExtensions
                 foreach (var ip in configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? [])
                 {
                     opcoes.KnownProxies.Add(IPAddress.Parse(ip));
-                }
-
-                foreach (var rede in configuration.GetSection("ForwardedHeaders:KnownNetworks").Get<string[]>() ?? [])
-                {
-                    opcoes.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(rede));
                 }
             });
         }

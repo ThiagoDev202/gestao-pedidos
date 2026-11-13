@@ -2,7 +2,7 @@ name: gestao-pedidos
 
 services:
   sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU16-ubuntu-22.04
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Dev_Passw0rd1}
@@ -18,7 +18,7 @@ services:
       start_period: 15s
 
   db-init:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU16-ubuntu-22.04
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -38,8 +38,7 @@ services:
         condition: service_completed_successfully
     environment:
       ConnectionStrings__GestaoPedidos: Server=sqlserver,1433;Database=GestaoPedidos;User Id=sa;Password=${MSSQL_SA_PASSWORD:-Dev_Passw0rd1};TrustServerCertificate=True
-      ForwardedHeaders__Enabled: "true"
-      ForwardedHeaders__KnownNetworks__0: 172.28.0.0/16
+      ForwardedHeaders__Enabled: "false"
     ports:
       - "${API_PORT:-5080}:5080"
     healthcheck:
