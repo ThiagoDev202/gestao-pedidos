@@ -35,7 +35,7 @@ backend/src/GestaoPedidos.Api/Endpoints/<Recurso>Endpoints.cs        MapGroup + 
 - **Código novo**: `Nullable`, sem comentários, nomes de domínio em pt-BR e sufixos técnicos em inglês.
 
 ## 4. Registro e documentação
-- Registre o handler (e o decorator) no DI de `Application`/`Infrastructure`; mapeie o grupo em `Api/Program.cs`.
+- Registre o handler em `Application/DependencyInjection.cs` (os decorators de validação e log já envolvem todo handler registrado); mapeie o grupo em `Api/Composition/WebApplicationExtensions.cs` (`UseGestaoPedidos`).
 - Atualize `contracts/openapi.yaml` e confira que o OpenAPI gerado (Scalar) bate com ele.
 - Schema novo: `database/*.sql` idempotente + mapeamento EF; índice com justificativa de plano de execução (`/sql-investigate`).
 
