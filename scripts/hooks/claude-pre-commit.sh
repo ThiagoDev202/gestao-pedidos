@@ -12,6 +12,8 @@ if [ "$cmd" = "__erro__" ]; then
   exit 2
 fi
 
+cmd=$(printf '%s\n' "$cmd" | awk -f "$(dirname "$0")/strip-heredocs.awk")
+
 if printf '%s' "$cmd" | grep -qE '(^|[;&|(` ])gh +pr +(create|edit)\b' && printf '%s' "$cmd" | grep -qiE 'Generated with \[?Claude|Co-Authored-By: .*(claude|anthropic|copilot|cursor)'; then
   echo "PR bloqueado: o corpo não leva marca de ferramenta nem coautoria (AGENTS.md, docs/policies/git.md)." >&2
   exit 2
