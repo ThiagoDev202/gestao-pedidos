@@ -100,10 +100,11 @@ docker-compose.yml
 
 **Criar pedido** (`CriarPedidoHandler`, dentro de `strategy.ExecuteAsync` + transação):
 1. Validator (400): ≥ 1 e ≤ 50 itens, quantidades > 0, sem produto repetido.
+1b. Se vier `Idempotency-Key`: chave já registrada com o mesmo hash do corpo → devolve o pedido original (200); hash diferente → `ChaveReutilizada` (422).
 2. Cliente existe? senão `ClienteInexistente` → 422.
 3. Carrega produtos por id; faltando algum → `ProdutoInexistente` → 422.
 4. Para cada item **ordenado por `ProdutoId`**: `UPDATE Produtos SET Estoque = Estoque - @q WHERE Id = @id AND Estoque >= @q`; 0 linhas → `EstoqueInsuficiente` (rollback) → 422. A ordem fixa evita deadlock entre pedidos concorrentes.
-5. `Pedido.Criar(cliente, itens com preço congelado, clock)` calcula o total; persistir pedido e itens; commit.
+5. `Pedido.Criar(cliente, itens com preço congelado, clock)` calcula o total; persistir pedido, itens e o registro de idempotência (PK = chave) na **mesma transação**; commit. Duas requisições simultâneas com a mesma chave: uma viola a PK (erro 2627), reverte, relê o registro e devolve o pedido da vencedora.
 
 **Listar/relatório** (Dapper): intervalo `[dataInicio 00:00 UTC, dataFim + 1 dia)`; `OFFSET/FETCH` com `ORDER BY DataPedido DESC, Id DESC`; top 5 agrupado por `ClienteId`, `ORDER BY Total DESC, Nome`.
 

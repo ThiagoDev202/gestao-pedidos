@@ -25,6 +25,8 @@ Esperado: `sqlserver` saudável → `db-init` conclui com código 0 (schema e se
 | US2 inválido | `page=0` ou `pageSize=101` ou período invertido | 400 |
 | US3 | `GET /relatorios/top-clientes?dataInicio=2026-01-01&dataFim=2026-12-31` | 5 clientes, homônimos separados, valor decrescente |
 | US5 | `GET /clientes`, `GET /produtos`, `GET /pedidos/{id}` | listas e detalhe; 404 para id inexistente |
+| US1 idempotência | 2+ `POST` simultâneos com o mesmo `Idempotency-Key` e corpo | 1 pedido criado; demais devolvem o mesmo pedido; estoque baixado uma vez |
+| US1 chave reutilizada | mesma chave com corpo diferente | 422 `chave_reutilizada` |
 | Rate limit | rajada de `POST /pedidos` | 429 com `Retry-After` |
 
 ## 4. Cenário pela interface (US2 e US4)

@@ -23,8 +23,14 @@ Sem `NEEDS CLARIFICATION` pendente: as duas decisões de escopo (produto repetid
 - **Alternativas**: `SELECT ... UPDLOCK` seguido de `UPDATE` (mais round-trips); concorrência otimista com `rowversion` (retry em conflito, mais complexo); isolamento `SERIALIZABLE` (menos vazão).
 - **Preço**: lido na mesma transação; edição de preço está fora de escopo, então não há corrida relevante.
 
+## 4b. Idempotência do POST /pedidos
+- **Decisão**: header opcional `Idempotency-Key` (UUID). Tabela `IdempotenciaPedidos(Chave PK, HashCorpo, PedidoId, CriadoEm)` gravada na mesma transação do pedido; reenvio com o mesmo hash devolve o pedido original (200 + `Location`); hash diferente → 422 `chave_reutilizada`; corrida entre duas requisições com a mesma chave resolvida pela PK.
+- **Razão**: dois pedidos idênticos são legítimos, então a deduplicação não pode ser pelo conteúdo; o risco real é o mesmo envio repetido (duplo clique, retry após timeout, queda logo após o commit, onde o retry do EF não sabe se gravou). A chave torna o reenvio seguro.
+- **Alternativas**: só desabilitar o botão e limitar a taxa (não cobre retry de rede); deduplicar por conteúdo + janela de tempo (bloqueia compras repetidas legítimas); expirar chaves por job (fora de escopo, no backlog).
+- **Isolamento**: `READ COMMITTED` basta; a consistência vem do update atômico do estoque, da PK da chave e do `UNIQUE` dos itens.
+
 ## 5. Resiliência
-- **Decisão**: `EnableRetryOnFailure` do EF Core com a transação dentro de `strategy.ExecuteAsync` (reexecuta a unidade inteira, sem baixar estoque duas vezes); pipeline `Microsoft.Extensions.Resilience` (retry com backoff) nas leituras Dapper, só para erros transitórios do SQL; rate limiting de entrada com `AddRateLimiter` (token bucket no `POST /pedidos` e limite global por IP, 429 + `Retry-After`); sem circuit breaker.
+- **Decisão**: `EnableRetryOnFailure` do EF Core com a transação dentro de `strategy.ExecuteAsync` (reexecuta a unidade inteira, sem baixar estoque duas vezes; deadlock 1205 também é reexecutado); pipeline `Microsoft.Extensions.Resilience` (retry com backoff) nas leituras Dapper, só para erros transitórios do SQL; rate limiting de entrada com `AddRateLimiter` (token bucket no `POST /pedidos` e limite global por IP, 429 + `Retry-After`); sem circuit breaker.
 - **Razão**: única dependência é o banco; circuito aberto só trocaria um erro por outro (ADR-007). Polly limita chamadas de saída, não entrada, por isso o rate limiter nativo.
 - **Alternativas**: circuit breaker (sem ganho com dependência única); rate limiting via Polly (modelo errado).
 
