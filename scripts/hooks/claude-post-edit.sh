@@ -24,7 +24,7 @@ case "$rel" in
   frontend/src/*.ts|frontend/src/*.tsx|frontend/e2e/*.ts)
     [ -d "$root/frontend/node_modules" ] || exit 0
     cd "$root/frontend" || exit 0
-    run npx --no-install tsc --noEmit -p tsconfig.app.json
+    run npx --no-install tsc --noEmit -p tsconfig.json
     run npx --no-install eslint "${rel#frontend/}"
     ;;
 esac
