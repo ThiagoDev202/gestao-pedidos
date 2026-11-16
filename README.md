@@ -2,7 +2,26 @@
 
 Mini aplicação de cadastro e consulta de pedidos de clientes: **SQL Server + .NET 10 (Clean Architecture) + React/TypeScript**, tudo em Docker, desenvolvida com Spec-Driven Development e o Claude Code.
 
-> Este README é a versão do bootstrap (toolkit de IA e governança). Rodar com Docker, testes, decisões técnicas, uso do MCP, Parte 4 e o relato "Como usei o Claude" entram completos no PR final de entrega.
+> Este README é a versão intermediária. Decisões técnicas, uso do MCP, Parte 4 e o relato "Como usei o Claude" entram completos no PR final de entrega.
+
+## Como rodar
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Sobe `sqlserver`, `db-init` (scripts de `database/`, uma vez), `api` e `web`. Frontend em http://localhost:8080, API em http://localhost:5080 e documentação em http://localhost:5080/scalar.
+
+## Testes
+
+```bash
+dotnet test backend                          # unitários, arquitetura e integração (Docker necessário)
+npm --prefix frontend ci
+npm --prefix frontend run lint | typecheck | test | build
+npx --prefix frontend playwright install chromium
+E2E_BASE_URL=http://localhost:8080 npx --prefix frontend playwright test   # com o compose de pé
+```
 
 ## Estrutura
 

@@ -23,3 +23,14 @@ Alimentado pelo `/retro` a cada PR; vira a seção "Como usei o Claude" do READM
   - `PedidoInvalidoException` mapeada para um código fora do catálogo (`pedido_invalido`); passou a carregar códigos que já existem.
   - Retorno de `sp_getapplock` ignorado; `!` para silenciar nulos; doc exigia `meta.maximo` que o código nunca emitiu (doc corrigido).
 - **Lição**: afirmação sobre comportamento sem requisição ou teste é hipótese; o teste de arquitetura também rejeita tipos gerados pelo compilador (`[x]` como argumento).
+
+## PR 3: frontend (2026-11-16)
+- **Funcionou bem**: o `qa-guardian` escreveu os 159 testes do front e os 2 e2e antes de qualquer tela, a partir de contratos de módulo que eu defini (nomes, props, textos); validou os próprios testes contra uma implementação descartável com 18 mutações. Implementar depois foi quase mecânico: 159 verdes na primeira rodada completa, só um ajuste (rótulo do botão trocava durante o envio).
+- **O Claude errou e foi corrigido**:
+  - Gap do guardrail: a regex de comentário tratava o glob `src/**/*.test` como bloco `/* */` e barrou o commit; corrigida só para o caso legítimo.
+  - `git add frontend` amplo quase misturou testes do `qa-guardian` num commit de infraestrutura; refeito em commits por tema antes do push.
+  - Healthcheck do `web` com `localhost` (IPv6 no Alpine) marcava unhealthy; trocado por `127.0.0.1`.
+  - IP fixo do nginx dentro do pool dinâmico do Docker (apontado pelo `code-reviewer`): `ip_range` separado.
+  - Config do Vitest morava em `vite.config.ts`, fora do lacre; o lacre passou a cobri-la.
+  - O `ux-guardian` bloqueou por três itens que os testes não pegavam: sem estado de sucesso, falha de `/clientes` sem alerta, foco perdido ao fechar o diálogo.
+- **Lição**: teste verde não prova UX; olhar a tela de verdade (Playwright com screenshots) achou o que o Vitest não achou. Os tipos de agente do projeto não estavam registrados nesta sessão; usei `general-purpose` lendo `.claude/agents/<nome>.md`.
