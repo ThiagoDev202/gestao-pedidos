@@ -39,6 +39,8 @@ function mensagemGenerica(status: number) {
   return 'Não foi possível concluir a operação. Revise os dados e tente de novo.'
 }
 
+export const CODIGOS_DO_CATALOGO: ReadonlySet<string> = new Set(Object.keys(mensagensPorCodigo))
+
 export function mensagemDoErro(erro: ApiError): string {
   const montar = mensagensPorCodigo[erro.code]
   return montar ? montar(erro) : mensagemGenerica(erro.status)

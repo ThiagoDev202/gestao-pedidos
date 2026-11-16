@@ -1,6 +1,6 @@
 import { CircleAlert } from 'lucide-react'
 import type { ApiError } from '@/shared/api/ApiError'
-import { mensagemDoErro } from '@/shared/api/error-messages'
+import { CODIGOS_DO_CATALOGO, mensagemDoErro } from '@/shared/api/error-messages'
 import { Button } from '@/shared/components/ui/button'
 
 const CODIGOS_CONHECIDOS_REPETIVEIS = new Set(['sem_conexao', 'limite_requisicoes_excedido', 'erro_interno', 'banco_indisponivel'])
@@ -13,19 +13,6 @@ function ehInesperado(erro: ApiError) {
   return erro.status >= 500 || erro.code === 'erro_interno' || !CODIGOS_DO_CATALOGO.has(erro.code)
 }
 
-const CODIGOS_DO_CATALOGO = new Set([
-  'validacao_falhou',
-  'pedido_nao_encontrado',
-  'recurso_nao_encontrado',
-  'formato_nao_suportado',
-  'cliente_inexistente',
-  'produto_inexistente',
-  'estoque_insuficiente',
-  'chave_reutilizada',
-  'limite_requisicoes_excedido',
-  'sem_conexao',
-  'resposta_invalida',
-])
 
 interface ErrorAlertProps {
   erro: ApiError | null | undefined

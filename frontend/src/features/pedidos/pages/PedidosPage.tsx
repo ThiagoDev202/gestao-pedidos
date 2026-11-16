@@ -56,7 +56,7 @@ export function PedidosPage() {
   }
 
   const erro = consulta.error instanceof ApiError ? consulta.error : null
-  const pagina_ = consulta.data
+  const resultado = consulta.data
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
@@ -85,33 +85,37 @@ export function PedidosPage() {
         </div>
       ) : null}
 
-      {pagina_ && pagina_.items.length === 0 ? (
+      {resultado && resultado.items.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
           <p className="font-medium">Nenhum pedido encontrado</p>
           {temFiltro ? (
             <Button variant="outline" onClick={limpar}>
               Limpar filtros
             </Button>
+          ) : pagina > 1 ? (
+            <Button variant="outline" onClick={() => atualizar({ page: 1 })}>
+              Voltar à primeira página
+            </Button>
           ) : null}
         </div>
       ) : null}
 
-      {pagina_ && pagina_.items.length > 0 ? (
+      {resultado && resultado.items.length > 0 ? (
         <section className="flex flex-col gap-4">
-          <PedidosTable pedidos={pagina_.items} />
+          <PedidosTable pedidos={resultado.items} />
           <nav aria-label="Paginação" className="flex items-center justify-between gap-4 text-sm">
             <span>
-              Página {pagina_.page} de {pagina_.totalPages} · {pagina_.totalItems} {pagina_.totalItems === 1 ? 'pedido' : 'pedidos'}
+              Página {resultado.page} de {resultado.totalPages} · {resultado.totalItems} {resultado.totalItems === 1 ? 'pedido' : 'pedidos'}
             </span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled={pagina_.page <= 1} onClick={() => atualizar({ page: pagina_.page - 1 })}>
+              <Button variant="outline" size="sm" disabled={resultado.page <= 1} onClick={() => atualizar({ page: resultado.page - 1 })}>
                 Anterior
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                disabled={pagina_.page >= pagina_.totalPages}
-                onClick={() => atualizar({ page: pagina_.page + 1 })}
+                disabled={resultado.page >= resultado.totalPages}
+                onClick={() => atualizar({ page: resultado.page + 1 })}
               >
                 Próxima
               </Button>
