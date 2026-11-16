@@ -12,7 +12,7 @@ if ! base_commit=$(git merge-base "$base" HEAD 2>/dev/null); then
   echo "✗ base $base não encontrada (git fetch origin ou defina QA_BASE)"
   exit 1
 fi
-patterns=('backend/tests/' '*.test.ts' '*.test.tsx' 'frontend/e2e/' 'frontend/vitest.config.ts' 'frontend/playwright.config.ts' 'frontend/src/test/')
+patterns=('backend/tests/' '*.test.ts' '*.test.tsx' 'frontend/e2e/' 'frontend/vite.config.ts' 'frontend/playwright.config.ts' 'frontend/src/test/')
 
 list_files() {
   {
