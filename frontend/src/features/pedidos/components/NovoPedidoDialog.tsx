@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash2 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, type RefObject } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { useClientes, useProdutos } from '@/features/pedidos/hooks/usePedidos'
 import { useCriarPedido } from '@/features/pedidos/hooks/useCriarPedido'
@@ -10,6 +10,7 @@ import {
   novoPedidoSchema,
   type NovoPedidoFormulario,
 } from '@/features/pedidos/schemas/novo-pedido'
+import type { PedidoDetalhe } from '@/shared/api/types'
 import { ApiError } from '@/shared/api/ApiError'
 import { paraCaminhoDoFormulario } from '@/shared/api/caminho-do-campo'
 import { mensagemDoCampo } from '@/shared/api/error-messages'
@@ -25,9 +26,11 @@ import { formatarMoeda } from '@/shared/lib/format'
 interface NovoPedidoDialogProps {
   open: boolean
   onOpenChange: (aberto: boolean) => void
+  onCriado?: (pedido: PedidoDetalhe) => void
+  retornarFoco?: RefObject<HTMLElement | null>
 }
 
-export function NovoPedidoDialog({ open, onOpenChange }: NovoPedidoDialogProps) {
+export function NovoPedidoDialog({ open, onOpenChange, onCriado, retornarFoco }: NovoPedidoDialogProps) {
   const clientes = useClientes()
   const produtos = useProdutos(open)
   const criar = useCriarPedido()
@@ -65,19 +68,18 @@ export function NovoPedidoDialog({ open, onOpenChange }: NovoPedidoDialogProps) 
 
   async function enviar(valores: NovoPedidoFormulario) {
     try {
-      await criar.mutateAsync({
+      const criado = await criar.mutateAsync({
         clienteId: Number(valores.clienteId),
         itens: valores.itens.map((item) => ({ produtoId: Number(item.produtoId), quantidade: Number(item.quantidade) })),
       })
+      onCriado?.(criado)
       onOpenChange(false)
     } catch (erro) {
       if (!(erro instanceof ApiError)) throw erro
-      for (const campo of erro.errors) {
-        const caminho = paraCaminhoDoFormulario(campo.campo)
-        if (caminho !== 'root') {
-          setError(caminho as Parameters<typeof setError>[0], { type: 'server', message: mensagemDoCampo(campo) })
-        }
-      }
+      const deCampo = erro.errors.filter((campo) => paraCaminhoDoFormulario(campo.campo) !== 'root')
+      deCampo.forEach((campo, posicao) => {
+        setError(paraCaminhoDoFormulario(campo.campo) as Parameters<typeof setError>[0], { type: 'server', message: mensagemDoCampo(campo) }, { shouldFocus: posicao === 0 })
+      })
     }
   }
 
@@ -92,7 +94,14 @@ export function NovoPedidoDialog({ open, onOpenChange }: NovoPedidoDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent
+        onCloseAutoFocus={(evento) => {
+          if (retornarFoco?.current) {
+            evento.preventDefault()
+            retornarFoco.current.focus()
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Novo pedido</DialogTitle>
           <DialogDescription>Escolha o cliente e adicione os produtos do pedido.</DialogDescription>
@@ -101,6 +110,9 @@ export function NovoPedidoDialog({ open, onOpenChange }: NovoPedidoDialogProps) 
         <form onSubmit={(evento) => void aoEnviar(evento)} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="novo-pedido-cliente">Cliente</Label>
+            {clientes.error instanceof ApiError ? (
+              <ErrorAlert erro={clientes.error} onTentarNovamente={() => void clientes.refetch()} />
+            ) : null}
             <Select
               id="novo-pedido-cliente"
               aria-invalid={Boolean(erros.clienteId)}
@@ -128,7 +140,7 @@ export function NovoPedidoDialog({ open, onOpenChange }: NovoPedidoDialogProps) 
               const idProduto = `item-${indice}-produto`
               const idQuantidade = `item-${indice}-quantidade`
               return (
-                <div key={campo.id} className="grid grid-cols-[1fr_8rem_auto] items-start gap-3">
+                <div key={campo.id} className="grid grid-cols-1 items-start gap-3 sm:grid-cols-[1fr_8rem_auto]">
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={idProduto}>{`Produto do item ${indice + 1}`}</Label>
                     <Select
@@ -161,7 +173,7 @@ export function NovoPedidoDialog({ open, onOpenChange }: NovoPedidoDialogProps) 
                     />
                     <FieldError id={`${idQuantidade}-erro`} mensagem={erroQuantidade} />
                   </div>
-                  <div className="flex flex-col items-end gap-1.5 pt-6">
+                  <div className="flex items-center justify-between gap-2 sm:flex-col sm:items-end sm:justify-start sm:pt-6">
                     <span className="text-sm text-muted-foreground">{formatarMoeda(subtotalDe(indice))}</span>
                     <Button
                       variant="ghost"

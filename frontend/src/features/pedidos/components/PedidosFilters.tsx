@@ -1,4 +1,6 @@
 import { useClientes } from '@/features/pedidos/hooks/usePedidos'
+import { ApiError } from '@/shared/api/ApiError'
+import { ErrorAlert } from '@/shared/components/ui/ErrorAlert'
 import { Button } from '@/shared/components/ui/button'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
@@ -17,9 +19,14 @@ interface PedidosFiltersProps {
 }
 
 export function PedidosFilters({ valores, onAlterar, onLimpar }: PedidosFiltersProps) {
-  const { data: clientes = [] } = useClientes()
+  const consultaClientes = useClientes()
+  const clientes = consultaClientes.data ?? []
 
   return (
+    <div className="flex flex-col gap-3">
+    {consultaClientes.error instanceof ApiError ? (
+      <ErrorAlert erro={consultaClientes.error} onTentarNovamente={() => void consultaClientes.refetch()} />
+    ) : null}
     <div className="flex flex-wrap items-end gap-4">
       <div className="flex min-w-48 flex-col gap-1.5">
         <Label htmlFor="filtro-cliente">Cliente</Label>
@@ -48,6 +55,7 @@ export function PedidosFilters({ valores, onAlterar, onLimpar }: PedidosFiltersP
       <Button variant="outline" onClick={onLimpar}>
         Limpar filtros
       </Button>
+    </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
-import { Plus } from 'lucide-react'
-import { useState } from 'react'
+import { CircleCheck, Plus } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { NovoPedidoDialog } from '@/features/pedidos/components/NovoPedidoDialog'
 import { PedidosFilters, type ValoresDosFiltros } from '@/features/pedidos/components/PedidosFilters'
@@ -21,6 +21,8 @@ function lerPagina(texto: string | null) {
 export function PedidosPage() {
   const [parametros, setParametros] = useSearchParams()
   const [novoPedidoAberto, setNovoPedidoAberto] = useState(false)
+  const [pedidoCriado, setPedidoCriado] = useState<number | null>(null)
+  const botaoNovoPedido = useRef<HTMLButtonElement>(null)
 
   const valores: ValoresDosFiltros = {
     clienteId: parametros.get('clienteId') ?? '',
@@ -62,11 +64,18 @@ export function PedidosPage() {
     <main className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
       <header className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">Pedidos</h1>
-        <Button onClick={() => setNovoPedidoAberto(true)}>
+        <Button ref={botaoNovoPedido} onClick={() => { setPedidoCriado(null); setNovoPedidoAberto(true) }}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           Novo pedido
         </Button>
       </header>
+
+      {pedidoCriado !== null ? (
+        <p role="status" className="flex items-center gap-2 rounded-md border border-success/40 bg-success/10 p-3 text-sm text-success">
+          <CircleCheck className="h-4 w-4" aria-hidden="true" />
+          Pedido {pedidoCriado} criado com sucesso.
+        </p>
+      ) : null}
 
       <PedidosFilters valores={valores} onAlterar={alterarFiltros} onLimpar={limpar} />
 
@@ -124,7 +133,12 @@ export function PedidosPage() {
         </section>
       ) : null}
 
-      <NovoPedidoDialog open={novoPedidoAberto} onOpenChange={setNovoPedidoAberto} />
+      <NovoPedidoDialog
+        open={novoPedidoAberto}
+        onOpenChange={setNovoPedidoAberto}
+        onCriado={(pedido) => setPedidoCriado(pedido.id)}
+        retornarFoco={botaoNovoPedido}
+      />
     </main>
   )
 }

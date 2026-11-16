@@ -10,7 +10,7 @@ export function PedidosTable({ pedidos }: { pedidos: PedidoResumo[] }) {
           <TableHead>Pedido</TableHead>
           <TableHead>Cliente</TableHead>
           <TableHead>Data</TableHead>
-          <TableHead>Itens</TableHead>
+          <TableHead className="text-right">Itens</TableHead>
           <TableHead className="text-right">Total</TableHead>
         </TableRow>
       </TableHeader>
@@ -20,7 +20,7 @@ export function PedidosTable({ pedidos }: { pedidos: PedidoResumo[] }) {
             <TableCell>{pedido.id}</TableCell>
             <TableCell>{pedido.clienteNome}</TableCell>
             <TableCell>{formatarDataHora(pedido.dataPedido)}</TableCell>
-            <TableCell>{pedido.quantidadeItens}</TableCell>
+            <TableCell className="text-right">{pedido.quantidadeItens}</TableCell>
             <TableCell className="text-right">{formatarMoeda(pedido.valorTotal)}</TableCell>
           </TableRow>
         ))}
