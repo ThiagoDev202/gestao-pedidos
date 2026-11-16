@@ -155,51 +155,51 @@ description: "Lista de tarefas da feature Mini Gestão de Pedidos"
 
 ## Fase 8: Preparação
 
-- [ ] T074 Criar `frontend/` com Vite + React + TypeScript strict, Tailwind e shadcn/ui; scripts `lint`, `typecheck`, `test`, `build` em `frontend/package.json` e proxy de `/api` para `http://localhost:5080` no `frontend/vite.config.ts` (dev sem CORS)
-- [ ] T075 [P] Estrutura `frontend/src/{app,features/pedidos,shared}` e `frontend/vitest.config.ts` com Testing Library
-- [ ] T076 [P] `frontend/Dockerfile` (build → nginx), `frontend/nginx.conf` (serve o build e faz proxy de `/api` para `api:5080`, repassando `X-Forwarded-For` e `X-Forwarded-Proto`), `frontend/.dockerignore`; serviço `web` (porta 8080) em `docker-compose.yml`
-- [ ] T077 Tipos do contrato em `frontend/src/shared/api/types.ts` e schemas zod espelhando `specs/001-gestao-pedidos/contracts/openapi.yaml`
+- [x] T074 Criar `frontend/` com Vite + React + TypeScript strict, Tailwind e shadcn/ui; scripts `lint`, `typecheck`, `test`, `build` em `frontend/package.json` e proxy de `/api` para `http://localhost:5080` no `frontend/vite.config.ts` (dev sem CORS)
+- [x] T075 [P] Estrutura `frontend/src/{app,features/pedidos,shared}` e `frontend/vitest.config.ts` com Testing Library
+- [x] T076 [P] `frontend/Dockerfile` (build → nginx), `frontend/nginx.conf` (serve o build e faz proxy de `/api` para `api:5080`, repassando `X-Forwarded-For` e `X-Forwarded-Proto`), `frontend/.dockerignore`; serviço `web` (porta 8080) em `docker-compose.yml`
+- [x] T077 Tipos do contrato em `frontend/src/shared/api/types.ts` e schemas zod espelhando `specs/001-gestao-pedidos/contracts/openapi.yaml`
 
 ## Fase 9: Fundação de erros (bloqueia as telas)
 
 ### Testes (qa-guardian, RED)
-- [ ] T078 [P] Vitest `frontend/src/shared/api/http-client.test.ts`: resposta ProblemDetails vira `ApiError` com `status`, `code`, `meta`, `errors`, `traceId`; falha de rede vira `sem_conexao`; corpo que não é ProblemDetails vira `resposta_invalida`
-- [ ] T079 [P] Vitest `frontend/src/shared/api/error-messages.test.ts`: **um teste por `code` do catálogo** (`docs/policies/errors.md`) conferindo a mensagem pt-BR específica com interpolação de `meta` (ex.: produto, solicitado, disponível); código desconhecido cai na mensagem do `status`; nunca texto técnico cru
-- [ ] T080 [P] Vitest `frontend/src/shared/components/ui/ErrorAlert.test.tsx` e `FieldError.test.tsx`: exibe mensagem, `traceId` como código de suporte nos erros inesperados, ação "Tentar de novo", espera do `Retry-After` no 429
-- [ ] T081 `qa-guardian` lacra e commit `test(web): add failing tests for the error handling layer`
+- [x] T078 [P] Vitest `frontend/src/shared/api/http-client.test.ts`: resposta ProblemDetails vira `ApiError` com `status`, `code`, `meta`, `errors`, `traceId`; falha de rede vira `sem_conexao`; corpo que não é ProblemDetails vira `resposta_invalida`
+- [x] T079 [P] Vitest `frontend/src/shared/api/error-messages.test.ts`: **um teste por `code` do catálogo** (`docs/policies/errors.md`) conferindo a mensagem pt-BR específica com interpolação de `meta` (ex.: produto, solicitado, disponível); código desconhecido cai na mensagem do `status`; nunca texto técnico cru
+- [x] T080 [P] Vitest `frontend/src/shared/components/ui/ErrorAlert.test.tsx` e `FieldError.test.tsx`: exibe mensagem, `traceId` como código de suporte nos erros inesperados, ação "Tentar de novo", espera do `Retry-After` no 429
+- [x] T081 `qa-guardian` lacra e commit `test(web): add failing tests for the error handling layer`
 
 ### Implementação
-- [ ] T082 [P] `frontend/src/shared/api/http-client.ts` e `ApiError.ts`
-- [ ] T083 [P] `frontend/src/shared/api/error-messages.ts` (dicionário `code → mensagem`)
-- [ ] T084 [P] `ErrorAlert` e `FieldError` em `frontend/src/shared/components/ui/`
+- [x] T082 [P] `frontend/src/shared/api/http-client.ts` e `ApiError.ts`
+- [x] T083 [P] `frontend/src/shared/api/error-messages.ts` (dicionário `code → mensagem`)
+- [x] T084 [P] `ErrorAlert` e `FieldError` em `frontend/src/shared/components/ui/`
 
 ## Fase 10: US2 — Tela de listagem (P1)
 
 ### Testes (qa-guardian, RED)
-- [ ] T085 [P] [US2] Vitest `frontend/src/features/pedidos/pages/PedidosPage.test.tsx`: lista, filtros por cliente e período refletidos na URL, paginação, estados vazio (com "limpar filtros"), carregando e erro
-- [ ] T086 [US2] `qa-guardian` lacra e commit `test(web): add failing tests for the orders list page`
+- [x] T085 [P] [US2] Vitest `frontend/src/features/pedidos/pages/PedidosPage.test.tsx`: lista, filtros por cliente e período refletidos na URL, paginação, estados vazio (com "limpar filtros"), carregando e erro
+- [x] T086 [US2] `qa-guardian` lacra e commit `test(web): add failing tests for the orders list page`
 
 ### Implementação
-- [ ] T087 [P] [US2] `features/pedidos/api/pedidos.ts`, `schemas/`, `hooks/usePedidos.ts` (TanStack Query com filtros na chave)
-- [ ] T088 [US2] `features/pedidos/components/PedidosTable.tsx`, `PedidosFilters.tsx`, `pages/PedidosPage.tsx`; moeda em R$ e datas no fuso local
+- [x] T087 [P] [US2] `features/pedidos/api/pedidos.ts`, `schemas/`, `hooks/usePedidos.ts` (TanStack Query com filtros na chave)
+- [x] T088 [US2] `features/pedidos/components/PedidosTable.tsx`, `PedidosFilters.tsx`, `pages/PedidosPage.tsx`; moeda em R$ e datas no fuso local
 
 ## Fase 11: US4 + US5 — Criar pedido pela tela (P2)
 
 ### Testes (qa-guardian, RED)
-- [ ] T089 [P] [US4] Vitest `.../components/NovoPedidoDialog.test.tsx`: escolher cliente, adicionar itens, subtotal e total, estoque visível, validação zod com mensagem junto do campo, produto repetido impedido, botão desabilitado enquanto envia, `Idempotency-Key` novo a cada tentativa de envio, 422 `estoque_insuficiente` mantém o diálogo aberto e mostra produto e quantidade disponível, erro de campo 400 no campo certo, sucesso fecha e invalida a listagem
-- [ ] T090 [US4] `qa-guardian` lacra e commit `test(web): add failing tests for the new order dialog`
+- [x] T089 [P] [US4] Vitest `.../components/NovoPedidoDialog.test.tsx`: escolher cliente, adicionar itens, subtotal e total, estoque visível, validação zod com mensagem junto do campo, produto repetido impedido, botão desabilitado enquanto envia, `Idempotency-Key` novo a cada tentativa de envio, 422 `estoque_insuficiente` mantém o diálogo aberto e mostra produto e quantidade disponível, erro de campo 400 no campo certo, sucesso fecha e invalida a listagem
+- [x] T090 [US4] `qa-guardian` lacra e commit `test(web): add failing tests for the new order dialog`
 
 ### Implementação
-- [ ] T091 [P] [US5] `features/pedidos/api/` (clientes e produtos) e hooks `useClientes`, `useProdutos`
-- [ ] T092 [US4] `features/pedidos/schemas/novo-pedido.ts` (zod: ≥ 1 e ≤ 50 itens, quantidade inteira > 0, sem produto repetido)
-- [ ] T093 [US4] `features/pedidos/components/NovoPedidoDialog.tsx` e `hooks/useCriarPedido.ts` (react-hook-form, mutation com `Idempotency-Key`, mapeamento de `errors[].campo` para campos)
-- [ ] T094 `ux-guardian` antes e depois (tokens, estados, acessibilidade, erros por `code`)
+- [x] T091 [P] [US5] `features/pedidos/api/` (clientes e produtos) e hooks `useClientes`, `useProdutos`
+- [x] T092 [US4] `features/pedidos/schemas/novo-pedido.ts` (zod: ≥ 1 e ≤ 50 itens, quantidade inteira > 0, sem produto repetido)
+- [x] T093 [US4] `features/pedidos/components/NovoPedidoDialog.tsx` e `hooks/useCriarPedido.ts` (react-hook-form, mutation com `Idempotency-Key`, mapeamento de `errors[].campo` para campos)
+- [x] T094 `ux-guardian` antes e depois (tokens, estados, acessibilidade, erros por `code`)
 
 ## Fase 12: e2e e CI
 
-- [ ] T095 [US4] Playwright (qa-guardian) `frontend/e2e/criar-pedido.spec.ts`: criar pedido pelo diálogo e vê-lo no topo da listagem; `frontend/e2e/estoque-insuficiente.spec.ts`: mensagem específica sem fechar o diálogo; `frontend/playwright.config.ts` contra o compose
-- [ ] T096 [P] Conferir/ajustar jobs `frontend` e `e2e` em `.github/workflows/pr-checks.yml` (compose `--wait` confirmando que o `db-init` de execução única não derruba o `--wait`, relatório do Playwright como artefato; passo `TZ=Pacific/Kiritimati` já incluído)
-- [ ] T097 `docker compose up --build` sobe banco, API e web; fluxo completo em http://localhost:8080
+- [x] T095 [US4] Playwright (qa-guardian) `frontend/e2e/criar-pedido.spec.ts`: criar pedido pelo diálogo e vê-lo no topo da listagem; `frontend/e2e/estoque-insuficiente.spec.ts`: mensagem específica sem fechar o diálogo; `frontend/playwright.config.ts` contra o compose
+- [x] T096 [P] Conferir/ajustar jobs `frontend` e `e2e` em `.github/workflows/pr-checks.yml` (compose `--wait` confirmando que o `db-init` de execução única não derruba o `--wait`, relatório do Playwright como artefato; passo `TZ=Pacific/Kiritimati` já incluído)
+- [x] T097 `docker compose up --build` sobe banco, API e web; fluxo completo em http://localhost:8080
 
 ## Gates do PR 3
 
